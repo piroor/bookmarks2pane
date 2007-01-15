@@ -1,0 +1,16 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#bookmarksPanel[panesCount="2"] bookmarks-tree#bookmarks-view[type="single-column"] {
+	-moz-binding: url("./bookmarks2pane.xml#bookmarks2pane-folder-tree") !important;
+}
+
+#bookmarksPanel[panesCount="2"] bookmarks-tree#bookmarks-content-view[type="single-column"] {
+	-moz-binding: url("./bookmarks2pane.xml#bookmarks2pane-content-tree") !important;
+}
+
+
+#bookmarksPanel:not([panesCount="2"]) .bookmarks-parts-for-2panes
+{
+	display: none;
+}
+

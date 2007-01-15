@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE bindings [
+<!ENTITY % b2pDTD SYSTEM "chrome://bookmarks2pane/locale/">
+%b2pDTD;
+<!ENTITY % bmDTD SYSTEM "chrome://browser/locale/bookmarks/bookmarks.dtd">
+%bmDTD;
+]>
+
+<bindings id="bookmarks2paneBindings"
+	xmlns="http://www.mozilla.org/xbl"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:xbl="http://www.mozilla.org/xbl"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+<binding id="bookmarks2pane-tree-base"
+	extends="chrome://browser/content/bookmarks/bookmarksTree.xml#bookmarks-tree-name">
+	<implementation>
+		<method name="getRootResource">
+			<body><![CDATA[
+				return RDF.GetResource(this.tree.ref);
+			]]></body>
+		</method>
+
+		<method name="openFolderContent">
+			<parameter name="aEvent"/>
+			<parameter name="aClickCount"/>
+			<body><![CDATA[
+				if (aClickCount !== void(0) &&
+					aEvent.type != 'keypress') {
+					if (aEvent.button == 2 ||
+						aEvent.originalTarget.localName != 'treechildren')
+						return;
+				}
+
+				var row = {};
+				var col = {};
+				var obj = {};
+				this.treeBoxObject.getCellAt(aEvent.clientX, aEvent.clientY, row, col, obj);
+				row = row.value;
+
+				if (/*row == -1 ||*/ aEvent.type != 'keypress' && obj.value == 'twisty') return;
+
+				if (aEvent.type != 'keypress') {
+					var modifKey = aEvent.shiftKey ||
+									aEvent.ctrlKey ||
+									aEvent.altKey ||
+									aEvent.metaKey  ||
+									aEvent.button == 1;
+					if (this.clickCount == 2 && modifKey) {
+						/*
+							treeBoxObject.view.selection : 2.0-
+							view.selection : 1.8a-1.9
+							treeBoxObject.selection : -1.7.x
+						*/
+						(
+							'view' in this.treeBoxObject ?
+								this.treeBoxObject.view.selection :
+							'selection' in this.treeBoxObject ?
+								this.treeBoxObject.selection :
+								this.view.selection
+							).select(row);
+						this._selection = this.getTreeSelection();
+					}
+				}
+
+				var selection = this._selection;
+				if (!selection.isContainer[0]) return;
+
+				if (
+					'onFolderContentOpen' in this &&
+					!this.onFolderContentOpen(aEvent, aClickCount, selection)
+					)
+					return;
+			]]></body>
+		</method>
+
+	</implementation>
+</binding>
+
+<binding id="bookmarks2pane-folder-tree"
+	extends="chrome://bookmarks2pane/content/bookmarks2pane.xml#bookmarks2pane-tree-base">
+	<xbl:content
+		xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		orient="vertical"
+		contextmenu="_child">
+		<menupopup xbl:inherits="onpopupshowing"
+			onpopupshowing="this.parentNode.createTreeContextMenu(event);"
+			onpopuphidden="if (content) content.focus()"
+			onclick="event.stopPropagation();"
+			onkeypress="event.stopPropagation();"/>
+		<tree anonid="bookmarks-tree"
+			xbl:inherits="rows,seltype"
+			flex="9"
+			datasources="rdf:bookmarks rdf:internetsearch rdf:localsearch"
+			ref="NC:BookmarksTopRoot"
+			hidecolumnpicker="true"
+			flags="dont-build-content"
+			onclick="this.parentNode.openItemClick(event, 1); this.parentNode.openFolderContent(event, 1);"
+			ondblclick="this.parentNode.openItemClick(event, 2); this.parentNode.openFolderContent(event, 2);"
+			onkeypress="if (event.keyCode == 13) { this.parentNode.openItemKey(); this.parentNode.openFolderContent(event); }"
+			onselect="Bookmarks2PaneService.currentTree = this.parentNode; this.parentNode.treeBoxObject.view.selectionChanged();"
+			onfocus="Bookmarks2PaneService.currentTree = this.parentNode;"
+			onmousedown="Bookmarks2PaneService.currentTree = this.parentNode;"
+			onkeydown="Bookmarks2PaneService.currentTree = this.parentNode;"
+			seltype="single">
+			<template>
+				<rule iscontainer="true">
+					<treechildren>
+						<treeitem uri="rdf:*">
+							<treerow properties="rdf:http://www.w3.org/1999/02/22-rdf-syntax-ns#type rdf:http://home.netscape.com/NC-rdf#loading rdf:http://home.netscape.com/WEB-rdf#status">
+								<treecell label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+							</treerow>
+						</treeitem>
+					</treechildren>
+				</rule>
+			</template>
+			<treecols anonid="treecols">
+				<treecol id="Name"
+					flex="1"
+					primary="true"
+					hideheader="true"
+					sort="rdf:http://home.netscape.com/NC-rdf#Name"
+					sortActive="true"
+					sortDirection="none"/>
+			</treecols>
+		</tree>
+	</xbl:content>
+
+	<implementation>
+		<method name="searchBookmarks">
+			<parameter name="aInput"/>
+			<body><![CDATA[
+				/*
+					treeBoxObject.view.selection : 2.0-
+					view.selection : 1.8a-1.9
+					treeBoxObject.selection : -1.7.x
+				*/
+				(
+					'view' in this.treeBoxObject ?
+						this.treeBoxObject.view.selection :
+					'selection' in this.treeBoxObject ?
+						this.treeBoxObject.selection :
+						this.tree.view.selection
+					).currentIndex = -1;
+
+				var event = document.createEvent('Events');
+				event.initEvent('Bookmarks2PaneOnFolderSelect', false, true);
+
+				if (!aInput) {
+					event.targetRef = null;
+				}
+				else {
+					event.targetRef = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#Name&method=contains&text=' + escape(aInput);
+				}
+
+				this.dispatchEvent(event);
+			]]></body>
+		</method>
+
+		<method name="onFolderContentOpen">
+			<parameter name="aEvent"/>
+			<parameter name="aClickCount"/>
+			<parameter name="aSelection"/>
+			<body><![CDATA[
+				var modifKey = aEvent.shiftKey ||
+								aEvent.ctrlKey ||
+								aEvent.altKey ||
+								aEvent.metaKey  ||
+								aEvent.button == 1;
+
+				if (
+					aEvent.type == 'keypress' ||
+					(
+					aClickCount == 1 &&
+					!modifKey
+					)
+					) {
+					if (
+						aSelection.length != 1 ||
+						('protocol' in aSelection && aSelection.protocol[0] != 'file')
+						)
+						return false;
+				}
+
+				var event = document.createEvent('Events');
+				event.initEvent('Bookmarks2PaneOnFolderSelect', false, true);
+				event.targetRef  = 'selection';
+				this.dispatchEvent(event);
+
+				return true;
+			]]></body>
+		</method>
+
+	</implementation>
+</binding>
+
+<binding id="bookmarks2pane-content-tree"
+	extends="chrome://bookmarks2pane/content/bookmarks2pane.xml#bookmarks2pane-tree-base">
+	<xbl:content
+		xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		orient="vertical"
+		contextmenu="_child">
+		<menupopup xbl:inherits="onpopupshowing"
+			onpopupshowing="this.parentNode.createTreeContextMenu(event);"
+			onpopuphidden="if (content) content.focus()"
+			onclick="event.stopPropagation();"
+			onkeypress="event.stopPropagation();"/>
+		<tree anonid="bookmarks-tree"
+			xbl:inherits="ref"
+			flex="1"
+			hidecolumnpicker="true"
+			datasources="rdf:bookmarks rdf:internetsearch rdf:localsearch"
+			ref="rdf:null"
+			flags="dont-build-content"
+			onclick="this.parentNode.openItemClick(event, 1); this.parentNode.openFolderContent(event, 1);"
+			ondblclick="this.parentNode.openItemClick(event, 2); this.parentNode.openFolderContent(event, 2);"
+			onkeypress="if (event.keyCode == 13) { this.parentNode.openItemKey(); this.parentNode.openFolderContent(event); }"
+			onselect="Bookmarks2PaneService.currentTree = this.parentNode; this.parentNode.treeBoxObject.view.selectionChanged();"
+			onfocus="Bookmarks2PaneService.currentTree = this.parentNode;"
+			onmousedown="Bookmarks2PaneService.currentTree = this.parentNode;"
+			onkeydown="Bookmarks2PaneService.currentTree = this.parentNode;"
+			seltype="single">
+			<template>
+				<rule rdf:type="http://home.netscape.com/NC-rdf#BookmarkSeparator">
+					<treechildren>
+						<treeitem uri="rdf:*">
+							<treerow properties="rdf:http://www.w3.org/1999/02/22-rdf-syntax-ns#type separator">
+								<treecell properties="separator"
+									label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+							</treerow>
+						</treeitem>
+					</treechildren>
+				</rule>
+				<rule iscontainer="true">
+					<treechildren>
+						<treeitem uri="rdf:*">
+							<treerow properties="rdf:http://www.w3.org/1999/02/22-rdf-syntax-ns#type rdf:http://home.netscape.com/NC-rdf#loading rdf:http://home.netscape.com/WEB-rdf#status">
+								<treecell label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+							</treerow>
+						</treeitem>
+					</treechildren>
+				</rule>
+				<rule>
+					<treechildren>
+						<treeitem uri="rdf:*">
+							<treerow properties="rdf:http://www.w3.org/1999/02/22-rdf-syntax-ns#type rdf:http://home.netscape.com/NC-rdf#loading rdf:http://home.netscape.com/WEB-rdf#status">
+								<treecell src="rdf:http://home.netscape.com/NC-rdf#Icon"
+									label="rdf:http://home.netscape.com/NC-rdf#Name"/>
+							</treerow>
+						</treeitem>
+					</treechildren>
+				</rule>
+			</template>
+			<treecols anonid="treecols">
+				<treecol id="Name"
+					flex="1"
+					primary="true"
+					hideheader="true"
+					sort="rdf:http://home.netscape.com/NC-rdf#Name"
+					sortActive="true"
+					sortDirection="none"/>
+			</treecols>
+		</tree>
+	</xbl:content>
+
+	<implementation>
+		<property name="label" readonly="true"
+			onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'bookmarks-tree-content-label');"/>
+
+		<method name="onFolderContentOpen">
+			<parameter name="aEvent"/>
+			<parameter name="aClickCount"/>
+			<parameter name="aSelection"/>
+			<body><![CDATA[
+				if (
+					(
+					aSelection.type[0] != 'Folder' &&
+					aSelection.type[0] != 'PersonalToolbarFolder'
+					) ||
+					(
+					aEvent.type != 'keypress' &&
+					aClickCount == 1
+					)
+					) {
+					aEvent.stopPropagation();
+					return false;
+				}
+				return true;
+			]]></body>
+		</method>
+
+	</implementation>
+</binding>
+
+</bindings>

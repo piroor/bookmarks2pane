@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+	<Description about="urn:mozilla:install-manifest">
+
+		<em:id>{FD61379B-066A-4afc-89DE-89FB24D907C2}</em:id>
+
+		<em:version>0.2.2007011101</em:version>
+
+
+		<em:targetApplication>
+			<Description>
+				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+				<em:minVersion>1.0</em:minVersion>
+				<em:maxVersion>2.0.0.*</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+
+		<em:name>2 Pane Bookmarks</em:name>
+		<em:description>shows the Bookmarks sidebar panel with 2 pane style like 0pera.</em:description>
+		<em:creator>SHIMODA Hiroshi</em:creator>
+		<em:contributor>Jacen</em:contributor>
+		<em:homepageURL>http://piro.sakura.ne.jp/</em:homepageURL>
+		<em:updateURL>http://piro.sakura.ne.jp/xul/xul.rdf.en</em:updateURL>
+
+
+		<em:optionsURL>chrome://bookmarks2pane/content/prefDialog.xul</em:optionsURL>
+		<!--em:iconURL></em:iconURL-->
+
+
+		<em:file>
+			<Description about="urn:mozilla:extension:file:bookmarks2pane.jar">
+				<em:package>content/bookmarks2pane/</em:package>
+				<em:locale>locale/en-US/bookmarks2pane/</em:locale>
+				<em:locale>locale/ja-JP/bookmarks2pane/</em:locale>
+				<em:locale>locale/sk-SK/bookmarks2pane/</em:locale>
+			</Description>
+		</em:file>
+	</Description>
+</RDF>
