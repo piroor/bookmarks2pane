@@ -20,6 +20,11 @@ var Bookmarks2PaneService = {
 		return nsPreferences.getBoolPref('bookmarks2pane.open_only_one_tree');
 	},
 
+	get shouldOpenNewTab()
+	{
+		return nsPreferences.getBoolPref('bookmarks2pane.open_new_tab_always');
+	},
+
 	init : function()
 	{
 		if (this.initialized) return;
@@ -68,6 +73,36 @@ var Bookmarks2PaneService = {
 			this.contentTree.treeBuilder.rebuild();
 			this.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(lastRef), 'http://home.netscape.com/NC-rdf#Name');
 		}
+
+		var newOpenItemClick = '$1; if (Bookmarks2PaneService.shouldOpenNewTab) { browserTarget = (browserTarget == "current") ? "tab" : (browserTarget == "tab") ? "current" : browserTarget  ;};';
+		eval(
+			'this.mainTree.openItemClick = '+
+			this.mainTree.openItemClick.toSource().replace(
+				/(whereToOpenLink\(aEvent\))/,
+				newOpenItemClick
+			)
+		);
+		eval(
+			'this.mainTree.openItemKey = '+
+			this.mainTree.openItemKey.toSource().replace(
+				/(['"])current['"]/,
+				'(Bookmarks2PaneService.shouldOpenNewTab ? $1tab$1 : $1current$1 )'
+			)
+		);
+		eval(
+			'this.contentTree.openItemClick = '+
+			this.contentTree.openItemClick.toSource().replace(
+				/(whereToOpenLink\(aEvent\))/,
+				newOpenItemClick
+			)
+		);
+		eval(
+			'this.contentTree.openItemKey = '+
+			this.contentTree.openItemKey.toSource().replace(
+				/current/,
+				'(Bookmarks2PaneService.shouldOpenNewTab ? $1tab$1 : $1current$1 )'
+			)
+		);
 	},
 
 	onToggleOpenStateKey : function(aEvent)
