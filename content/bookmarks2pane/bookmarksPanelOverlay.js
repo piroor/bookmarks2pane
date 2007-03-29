@@ -1,3 +1,22 @@
+(function() {
+	if (nsPreferences.getBoolPref('bookmarks2pane.enabled') === null)
+		nsPreferences.setBoolPref('bookmarks2pane.enabled', true);
+
+	if (nsPreferences.getBoolPref('bookmarks2pane.open_only_one_tree') === null)
+		nsPreferences.setBoolPref('bookmarks2pane.open_only_one_tree', true);
+
+
+	var root = document.getElementById('bookmarksPanel');
+
+	if (nsPreferences.getBoolPref('bookmarks2pane.enabled')) {
+		root.setAttribute('panesCount', '2');
+	}
+	else {
+		root.removeAttribute('panesCount');
+	}
+})();
+
+
 
 var Bookmarks2PaneService = {
 
@@ -13,22 +32,6 @@ var Bookmarks2PaneService = {
 		if (this.initialized) return;
 		this.initialized = true;
 
-
-		if (nsPreferences.getBoolPref('bookmarks2pane.enabled') === null)
-			nsPreferences.setBoolPref('bookmarks2pane.enabled', true);
-
-		if (nsPreferences.getBoolPref('bookmarks2pane.open_only_one_tree') === null)
-			nsPreferences.setBoolPref('bookmarks2pane.open_only_one_tree', true);
-
-
-		var root = document.getElementById('bookmarksPanel');
-
-		if (nsPreferences.getBoolPref('bookmarks2pane.enabled')) {
-			root.setAttribute('panesCount', '2');
-		}
-		else {
-			root.removeAttribute('panesCount');
-		}
 
 		this.mainTree        = document.getElementById('bookmarks-view');
 		this.contentTree     = document.getElementById('bookmarks-content-view');

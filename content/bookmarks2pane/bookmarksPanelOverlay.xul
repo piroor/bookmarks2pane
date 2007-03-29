@@ -18,7 +18,8 @@
 <page id="bookmarksPanel">
 	<splitter id="bookmarks-panes-splitter"
 		class="bookmarks-parts-for-2panes"/>
-	<vbox flex="1" id="bookmarks-content-box">
+	<vbox flex="1" id="bookmarks-content-box"
+		class="bookmarks-parts-for-2panes">
 		<hbox id="bookmarks-content-label-box">
 			<label id="bookmarks-content-label"
 				value=""
@@ -26,7 +27,6 @@
 				crop="end"/>
 		</hbox>
 		<bookmarks-tree id="bookmarks-content-view"
-			class="bookmarks-parts-for-2panes"
 			type="single-column" flex="1"
 			ref="rdf:null"
 			ondraggesture="if (event.originalTarget.localName == 'treechildren') nsDragAndDrop.startDrag(event, this.DNDObserver);"/>
