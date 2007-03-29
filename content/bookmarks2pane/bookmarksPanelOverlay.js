@@ -63,6 +63,17 @@ var Bookmarks2PaneService = {
 				)
 			);
 
+/*
+		// hack for Boox
+		if ('booxBPTooltip' in window)
+			eval(
+				'window.booxBPTooltip.fillInTooltip = '+
+				window.booxBPTooltip.fillInTooltip.toSource().replace(
+					/var tree = document.getElementById("bookmarks-view").tree;/,
+					''
+				)
+			);
+*/
 		window.setTimeout('Bookmarks2PaneService.delayedInit()', 0);
 	},
 	delayedInit : function()
