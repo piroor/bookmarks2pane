@@ -11,7 +11,7 @@
 		<em:targetApplication>
 			<Description>
 				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-				<em:minVersion>1.0</em:minVersion>
+				<em:minVersion>1.5</em:minVersion>
 				<em:maxVersion>2.0.0.*</em:maxVersion>
 			</Description>
 		</em:targetApplication>
@@ -26,15 +26,5 @@
 
 		<em:optionsURL>chrome://bookmarks2pane/content/prefDialog.xul</em:optionsURL>
 		<!--em:iconURL></em:iconURL-->
-
-
-		<em:file>
-			<Description about="urn:mozilla:extension:file:bookmarks2pane.jar">
-				<em:package>content/bookmarks2pane/</em:package>
-				<em:locale>locale/en-US/bookmarks2pane/</em:locale>
-				<em:locale>locale/ja-JP/bookmarks2pane/</em:locale>
-				<em:locale>locale/sk-SK/bookmarks2pane/</em:locale>
-			</Description>
-		</em:file>
 	</Description>
 </RDF>

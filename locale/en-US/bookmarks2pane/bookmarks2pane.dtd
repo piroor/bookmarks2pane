@@ -38,15 +38,11 @@
 
 
 <!ENTITY bookmarks2pane.pref.title  "Configuration of 2 Pane Bookmarks">
+
+<!ENTITY bookmarks2pane.pref.tab.general   "General">
+
 <!ENTITY bookmarks2pane.pref.appearance "Appearance">
 <!ENTITY bookmarks2pane.pref.appearance.enabled "Show bookmarks tree in 2 panes">
 <!ENTITY bookmarks2pane.pref.mode    "Behavior of bookmarks tree">
 <!ENTITY bookmarks2pane.pref.mode.normal "Expand sub-trees normally">
 <!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "Collapse other branches automatically when a sub-tree is expanded">
-
-
-<!ENTITY bookmarks2pane.title       "About 2 Pane Bookmarks">
-<!ENTITY bookmarks2pane.name_before "2 Pane Bookmarks Ver.">
-<!ENTITY bookmarks2pane.name_after  "">
-<!ENTITY bookmarks2pane.destributed "http://piro.sakura.ne.jp/">
-<!ENTITY bookmarks2pane.uninstall   "Uninstall">

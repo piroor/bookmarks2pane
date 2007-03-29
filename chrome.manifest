@@ -1,0 +1,9 @@
+
+overlay	chrome://browser/content/bookmarks/bookmarksPanel.xul	chrome://bookmarks2pane/content/bookmarksPanelOverlay.xul
+content	bookmarks2pane	jar:chrome/bookmarks2pane.jar!/content/bookmarks2pane/
+
+locale	bookmarks2pane	en-US	jar:chrome/bookmarks2pane.jar!/locale/en-US/bookmarks2pane/
+
+locale	bookmarks2pane	ja-JP	jar:chrome/bookmarks2pane.jar!/locale/ja-JP/bookmarks2pane/
+
+locale	bookmarks2pane	sk-SK	jar:chrome/bookmarks2pane.jar!/locale/sk-SK/bookmarks2pane/

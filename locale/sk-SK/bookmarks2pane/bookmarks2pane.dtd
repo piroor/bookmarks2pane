@@ -38,15 +38,11 @@
 
 
 <!ENTITY bookmarks2pane.pref.title  "Nastavenie 2 Pane Bookmarks">
+
+<!ENTITY bookmarks2pane.pref.tab.general   "General">
+
 <!ENTITY bookmarks2pane.pref.appearance "Vzhľad">
 <!ENTITY bookmarks2pane.pref.appearance.enabled "Zobraziť strom záložiek v dvoch paneloch">
 <!ENTITY bookmarks2pane.pref.mode    "Správanie sa stromu záložiek">
 <!ENTITY bookmarks2pane.pref.mode.normal "Rozložiť podvetvy normálne">
 <!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "Zlúčiť ostatné vetvy automaticky, ak je podvetva rozložená?">
-
-
-<!ENTITY bookmarks2pane.title       "O 2 Pane Bookmarks">
-<!ENTITY bookmarks2pane.name_before "Verzia 2 Pane Bookmarks">
-<!ENTITY bookmarks2pane.name_after  "">
-<!ENTITY bookmarks2pane.destributed "http://piro.sakura.ne.jp/">
-<!ENTITY bookmarks2pane.uninstall   "Odinštalovať">
