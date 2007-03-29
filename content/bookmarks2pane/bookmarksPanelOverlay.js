@@ -45,6 +45,26 @@ var Bookmarks2PaneService = {
 		this.mainTree.addEventListener('keypress', this.onToggleOpenStateKey, false);
 		this.mainTree.addEventListener('Bookmarks2PaneOnFolderSelect', this.onTargetChange, false);
 
+
+		// hack for Bookmarks Duplicate Detector
+		if ('BddsearchBookmarks' in window)
+			eval(
+				'window.BddsearchBookmarks = '+
+				window.BddsearchBookmarks.toSource().replace(
+					/(if\s*\(!aInput\))/,
+					'var event = document.createEvent("Events"); event.initEvent("Bookmarks2PaneOnFolderSelect", false, true); $1'
+				).replace(
+					/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],\s*bookmarkView\.originalRef\s*\)/,
+					'event.targetRef = null'
+				).replace(
+					/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],/g,
+					'event.targetRef = ('
+				).replace(
+					/\}(\)?)$/,
+					'; Bookmarks2PaneService.mainTree.dispatchEvent(event);}$1'
+				)
+			);
+
 		window.setTimeout('Bookmarks2PaneService.delayedInit()', 0);
 	},
 	delayedInit : function()
