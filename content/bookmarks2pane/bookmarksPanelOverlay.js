@@ -115,7 +115,7 @@ var Bookmarks2PaneService = {
 			aTree.tree.setAttribute('ref', 'NC:BookmarksTopRoot');
 			var template = aTree.tree.getElementsByTagName('template')[0];
 			template.lastChild.setAttribute('iscontainer', 'true')
-			while (template.lastChild == template.firstChild)
+			while (template.lastChild != template.firstChild)
 				template.removeChild(template.firstChild);
 
 			aTree.searchBookmarks = this.treeImplementations.searchBookmarks;
