@@ -5,7 +5,7 @@
 
 		<em:id>{FD61379B-066A-4afc-89DE-89FB24D907C2}</em:id>
 
-		<em:version>0.3.2007011101</em:version>
+		<em:version>0.3.2007033001</em:version>
 
 
 		<em:targetApplication>
@@ -19,7 +19,7 @@
 		<em:name>2 Pane Bookmarks</em:name>
 		<em:description>shows the Bookmarks sidebar panel with 2 pane style like 0pera.</em:description>
 		<em:creator>SHIMODA Hiroshi</em:creator>
-		<em:contributor>Jacen</em:contributor>
+		<em:translator>Jacen</em:translator>
 		<em:homepageURL>http://piro.sakura.ne.jp/</em:homepageURL>
 		<em:updateURL>http://piro.sakura.ne.jp/xul/xul.rdf.en</em:updateURL>
 
