@@ -25,6 +25,6 @@
 
 
 		<em:optionsURL>chrome://bookmarks2pane/content/prefDialog.xul</em:optionsURL>
-		<!--em:iconURL></em:iconURL-->
+		<em:iconURL>chrome://bookmarks2pane/content/icon.png</em:iconURL>
 	</Description>
 </RDF>
