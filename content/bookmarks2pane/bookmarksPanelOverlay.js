@@ -366,6 +366,8 @@ var Bookmarks2PaneService = {
 	{
 		var tree = Bookmarks2PaneService.contentTree;
 		if (aEvent.targetRef == 'selection') {
+			Bookmarks2PaneService.showHideFolderTree(true);
+
 			var selection = Bookmarks2PaneService.mainTree._selection;
 			tree.setAttribute('ref', selection.item[0].Value);
 			tree.tree.setAttribute('ref', selection.item[0].Value);
@@ -380,12 +382,10 @@ var Bookmarks2PaneService = {
 		else {
 			if (!aEvent.targetRef) {
 				tree.setAttribute('ref', tree.originalRef);
+				tree.tree.setAttribute('ref', tree.originalRef);
 				Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(tree.originalRef), 'http://home.netscape.com/NC-rdf#Name');
 
-				Bookmarks2PaneService.mainTree.removeAttribute('collapsed');
-				Bookmarks2PaneService.contentLabelBox.removeAttribute('collapsed');
-				Bookmarks2PaneService.dustbox.removeAttribute('collapsed');
-				Bookmarks2PaneService.splitter.removeAttribute('collapsed');
+				Bookmarks2PaneService.showHideFolderTree(true);
 			}
 			else {
 				if (!tree.originalRef) {
@@ -395,10 +395,7 @@ var Bookmarks2PaneService = {
 				tree.tree.setAttribute('ref', aEvent.targetRef);
 				Bookmarks2PaneService.contentLabel.value = '';
 
-				Bookmarks2PaneService.mainTree.setAttribute('collapsed', true);
-				Bookmarks2PaneService.contentLabelBox.setAttribute('collapsed', true);
-				Bookmarks2PaneService.dustbox.setAttribute('collapsed', true);
-				Bookmarks2PaneService.splitter.setAttribute('collapsed', true);
+				Bookmarks2PaneService.showHideFolderTree(false);
 			}
 		}
 	},
@@ -407,6 +404,22 @@ var Bookmarks2PaneService = {
 		Bookmarks2PaneService.contentTree.treeBoxObject.scrollToRow(0);
 	},
 
+
+	showHideFolderTree : function(aShow)
+	{
+		if (aShow) {
+			this.mainTree.removeAttribute('collapsed');
+			this.contentLabelBox.removeAttribute('collapsed');
+			this.dustbox.removeAttribute('collapsed');
+			this.splitter.removeAttribute('collapsed');
+		}
+		else {
+			this.mainTree.setAttribute('collapsed', true);
+			this.contentLabelBox.setAttribute('collapsed', true);
+			this.dustbox.setAttribute('collapsed', true);
+			this.splitter.setAttribute('collapsed', true);
+		}
+	},
 
 
 
@@ -467,6 +480,20 @@ var Bookmarks2PaneService = {
 						'tree = tree.parentNode;'+
 					'};'+
 					'if (!tree) { return false; } else { tree = tree.tree; };'
+				)
+			);
+
+
+		// hack for Locate in Bookmark Folders
+		if ('libfOverlayBP' in window)
+			eval(
+				'window.libfOverlayBP.locateInFolders = '+
+				window.libfOverlayBP.locateInFolders.toSource().replace(
+					'{',
+					'{ Bookmarks2PaneService.showHideFolderTree(true); '
+				).replace(
+					/libfOverlayBP\.bookmarksView/g,
+					'Bookmarks2PaneService.contentTree'
 				)
 			);
 
