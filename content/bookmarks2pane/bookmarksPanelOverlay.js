@@ -105,8 +105,8 @@ var Bookmarks2PaneService = {
 		aTree.tree.setAttribute('onkeydown', 'Bookmarks2PaneService.currentTree = this.parentNode;');
 
 		if (aType == 'content') {
-			aTree.setAttribute('rdf:null');
-			aTree.tree.setAttribute('rdf:null');
+			aTree.setAttribute('ref', 'rdf:null');
+			aTree.tree.setAttribute('ref', 'rdf:null');
 
 			aTree.onFolderContentOpen = this.treeImplementations.onContentTreeFolderContentOpen;
 			aTree.__defineGetter__('label', this.treeImplementations.contentTreeLabelGetter);
@@ -210,7 +210,19 @@ var Bookmarks2PaneService = {
 				event.targetRef = null;
 			}
 			else {
-				event.targetRef = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#Name&method=contains&text=' + escape(aInput);
+				var match = 'Name';
+				if ('gBooxSearchIn' in window) { // hack for Boox
+					switch (gBooxSearchIn)
+					{
+						case 'url':         match = 'URL';         break;
+						case 'keywords':    match = 'ShortcutURL'; break;
+						case 'description': match = 'Description'; break;
+						case 'title':
+						default:
+							break;
+					}
+				}
+				event.targetRef = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput);
 			}
 
 			this.dispatchEvent(event);
@@ -380,6 +392,7 @@ var Bookmarks2PaneService = {
 					tree.originalRef = tree.getAttribute('ref');
 				}
 				tree.setAttribute('ref', aEvent.targetRef);
+				tree.tree.setAttribute('ref', aEvent.targetRef);
 				Bookmarks2PaneService.contentLabel.value = '';
 
 				Bookmarks2PaneService.mainTree.setAttribute('collapsed', true);
