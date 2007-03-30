@@ -497,6 +497,17 @@ var Bookmarks2PaneService = {
 				)
 			);
 
+
+		// hack for Bookmark quick folder
+		if ('BqsOverlay' in window)
+			eval(
+				'window.BqsOverlay.doMove = '+
+				window.BqsOverlay.doMove.toSource().replace(
+					'document.getElementById("bookmarks-view")',
+					'Bookmarks2PaneService.currentTree'
+				)
+			);
+
 	}
 
 };
