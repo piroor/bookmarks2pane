@@ -97,6 +97,7 @@ else {
 			registerChrome(localeFlag, folder, 'locale/en-US/'+appName+'/');
 			registerChrome(localeFlag, folder, 'locale/ja-JP/'+appName+'/');
 			registerChrome(localeFlag, folder, 'locale/sk-SK/'+appName+'/');
+			registerChrome(localeFlag, folder, 'locale/hu-HU/'+appName+'/');
 
 			for (i = 0; i < installedOptions.length; i++) {
 				registerChrome(localeFlag, folder, 'locale/en-US/'+installedOptions[i]+'/');
