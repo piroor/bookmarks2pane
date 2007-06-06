@@ -13,10 +13,10 @@ License.
 The Original Code is the 2 Pane Bookmarks.
 
 The Initial Developer of the Original Code is SHIMODA Hiroshi.
-Portions created by the Initial Developer are Copyright (C) 2006
+Portions created by the Initial Developer are Copyright (C) 2006-2007
 the Initial Developer. All Rights Reserved.
 
-Contributor(s): Mikes Kaszman Istvan <cashman@inmail.sk>
+Contributor(s): Mikes Kaszmán István <cashman@inmail.sk>
 
 Alternatively, the contents of this file may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
