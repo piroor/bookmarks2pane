@@ -15,6 +15,11 @@ var Bookmarks2PaneService = {
 
 	initialized : false,
 
+	get isPlaces()
+	{
+		return 'SidebarUtils' in window;
+	},
+
 	get shouldOpenOnlyOneTree()
 	{
 		return nsPreferences.getBoolPref('bookmarks2pane.open_only_one_tree');
@@ -27,25 +32,119 @@ var Bookmarks2PaneService = {
 
 	init : function()
 	{
-		if (this.initialized) return;
-		this.initialized = true;
+		window.removeEventListener('load', this, false);
+		window.addEventListener('unload', this, false);
 
 		this.mainTree        = document.getElementById('bookmarks-view');
-		this.contentTree     = document.getElementById('bookmarks-content-view');
 		this.contentLabel    = document.getElementById('bookmarks-content-label');
 		this.contentLabelBox = document.getElementById('bookmarks-content-label-box');
 		this.dustbox         = document.getElementById('bookmarks-dustbox');
 		this.splitter        = document.getElementById('bookmarks-panes-splitter');
 
-		this.overrideTree(this.mainTree, 'main');
-		this.overrideTree(this.contentTree, 'content');
-		this.currentTree     = this.mainTree;
+		this.currentTree = this.mainTree;
+
+		if (this.isPlaces) { // Firefox 3
+			document.getElementById('bookmarks-content-view').setAttribute('collapsed', true);
+
+			this.contentTree = document.getElementById('places-content-view');
+			this.initPlaces();
+			this.mainTree.addEventListener('select', this, false);
+			this.contentTree.addEventListener('select', this, false);
+		}
+		else { // Firefox 2
+			document.getElementById('places-content-view').setAttribute('collapsed', true);
+
+			this.contentTree = document.getElementById('bookmarks-content-view');
+			window.setTimeout('Bookmarks2PaneService.delayedInitBookmarks()', 0);
+			this.overrideTree(this.mainTree, 'main');
+			this.overrideTree(this.contentTree, 'content');
+		}
+		this.contentTree.removeAttribute('collapsed', true);
 
 		this.hackForOtherExtensions();
-
-		window.setTimeout('Bookmarks2PaneService.delayedInit()', 0);
 	},
-	delayedInit : function()
+
+	destroy : function()
+	{
+		window.removeEventListener('unload', this, false);
+		if (this.isPlaces) {
+			this.mainTree.removeEventListener('select', this, false);
+			this.contentTree.removeEventListener('select', this, false);
+		}
+	},
+
+
+	handleEvent : function(aEvent)
+	{
+		switch (aEvent.type)
+		{
+			case 'select': // for Firefox 3
+				var tree = aEvent.currentTarget;
+				this.currentTree = tree;
+				switch (tree.selectedNode.type)
+				{
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
+						this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.folderItemId;
+						break;
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
+						this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.uri;
+						break;
+					default:
+						return;
+				}
+				this.contentLabel.value = tree.selectedNode.title;
+				break;
+
+			case 'load':
+				this.init();
+				break;
+
+			case 'unload':
+				this.destroy();
+				break;
+		}
+	},
+
+
+	// Places
+
+	initPlaces : function()
+	{
+		eval('PlacesTreeView.prototype._buildVisibleSection = '+
+			PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
+				'var curChildType = curChild.type;',
+				[
+				'$&',
+				'if (',
+					'(',
+						'this.selection &&',
+						'this.selection.tree &&',
+						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER &&',
+						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY &&',
+						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&',
+						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT',
+					') ?',
+						'this.selection.tree.element == Bookmarks2PaneService.mainTree :',
+						'(',
+							'this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&',
+							'curChild.parent.folderItemId != aContainer.folderItemId*/',
+						')',
+					') {',
+					'continue;',
+				'}'
+				].join('')
+			)
+		);
+		init();
+	},
+
+
+
+	// Bookmarks (RDF based)
+
+	delayedInitBookmarks : function()
 	{
 		var lastRef = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || 'rdf:null';
 		if (lastRef != 'rdf:null') {
@@ -86,11 +185,10 @@ var Bookmarks2PaneService = {
 		);
 	},
 
-
 	overrideTree : function(aTree, aType)
 	{
-		aTree.getRootResource = this.treeImplementations.getRootResource;
-		aTree.openFolderContent = this.treeImplementations.openFolderContent;
+		aTree.getRootResource = this.treeBookmarksImplementations.getRootResource;
+		aTree.openFolderContent = this.treeBookmarksImplementations.openFolderContent;
 
 		aTree.tree.setAttribute('onclick', 'this.parentNode.openItemClick(event, 1); this.parentNode.openFolderContent(event, 1);');
 		aTree.tree.setAttribute('ondblclick', 'this.parentNode.openItemClick(event, 2); this.parentNode.openFolderContent(event, 2);');
@@ -108,8 +206,8 @@ var Bookmarks2PaneService = {
 			aTree.setAttribute('ref', 'rdf:null');
 			aTree.tree.setAttribute('ref', 'rdf:null');
 
-			aTree.onFolderContentOpen = this.treeImplementations.onContentTreeFolderContentOpen;
-			aTree.__defineGetter__('label', this.treeImplementations.contentTreeLabelGetter);
+			aTree.onFolderContentOpen = this.treeBookmarksImplementations.onContentTreeFolderContentOpen;
+			aTree.__defineGetter__('label', this.treeBookmarksImplementations.contentTreeLabelGetter);
 		}
 		else {
 			aTree.tree.setAttribute('ref', 'NC:BookmarksTopRoot');
@@ -118,8 +216,8 @@ var Bookmarks2PaneService = {
 			while (template.lastChild != template.firstChild)
 				template.removeChild(template.firstChild);
 
-			aTree.searchBookmarks = this.treeImplementations.searchBookmarks;
-			aTree.onFolderContentOpen = this.treeImplementations.onFolderTreeFolderContentOpen;
+			aTree.searchBookmarks = this.treeBookmarksImplementations.searchBookmarks;
+			aTree.onFolderContentOpen = this.treeBookmarksImplementations.onFolderTreeFolderContentOpen;
 
 			aTree.addEventListener('click', this.onToggleOpenState, false);
 			aTree.addEventListener('keypress', this.onToggleOpenStateKey, false);
@@ -128,8 +226,7 @@ var Bookmarks2PaneService = {
 
 		aTree.treeBuilder.rebuild();
 	},
-
-	treeImplementations : {
+	treeBookmarksImplementations : {
 		getRootResource : function()
 		{
 			return RDF.GetResource(this.tree.ref);
@@ -286,10 +383,6 @@ var Bookmarks2PaneService = {
 
 	},
 
-
-
-
-
 	onToggleOpenStateKey : function(aEvent)
 	{
 		if (aEvent.keyCode == 13)
@@ -360,8 +453,6 @@ var Bookmarks2PaneService = {
 		tree.lastIndex = currentIndex;
 	},
 
-
-
 	onTargetChange : function(aEvent)
 	{
 		var tree = Bookmarks2PaneService.contentTree;
@@ -404,7 +495,6 @@ var Bookmarks2PaneService = {
 		Bookmarks2PaneService.contentTree.treeBoxObject.scrollToRow(0);
 	},
 
-
 	showHideFolderTree : function(aShow)
 	{
 		if (aShow) {
@@ -423,29 +513,45 @@ var Bookmarks2PaneService = {
 
 
 
+	// command
+
 	deleteCurrentSelection : function()
 	{
-		var selection = this.currentTree.getTreeSelection();
-		if (!selection.length) return;
-		BookmarksCommand.deleteBookmark(selection);
+		if (this.isPlaces) {
+			this.currentTree.controller.remove('Remove Selection');
+		}
+		else {
+			var selection = this.currentTree.getTreeSelection();
+			if (!selection.length) return;
+			BookmarksCommand.deleteBookmark(selection);
+		}
 	},
 
 	dustboxDNDObserver : {
 		onDrop : function(aEvent, aTransferData, aSession)
 		{
-			BookmarksCommand.deleteBookmark(Bookmarks2PaneService.currentTree.getTreeSelection());
+			Bookmarks2PaneService.deleteCurrentSelection();
 		},
 		onDragOver : function() {},
 		onDragExit : function() {},
 		getSupportedFlavours : function()
 		{
 			var flavours = new FlavourSet();
-			flavours.appendFlavour('moz/rdfitem');
+			if (Bookmarks2PaneService.isPlaces) {
+				var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES;
+				types.forEach(function(aType) {
+					flavours.appendFlavour(aType);
+				}
+			}
+			else {
+				flavours.appendFlavour('moz/rdfitem');
+			}
 			return flavours;
 		}
 	},
 
 
+	// compatibility
 
 	hackForOtherExtensions : function()
 	{
@@ -513,5 +619,4 @@ var Bookmarks2PaneService = {
 };
 
 
-window.addEventListener('load', function() { Bookmarks2PaneService.init(); }, false);
-window.addEventListener('load', function() { Bookmarks2PaneService.init(); }, false); // failsafe
+window.addEventListener('load', Bookmarks2PaneService, false);
