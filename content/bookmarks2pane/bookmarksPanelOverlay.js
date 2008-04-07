@@ -28,6 +28,8 @@ var Bookmarks2PaneService = {
 		return nsPreferences.getBoolPref('bookmarks2pane.open_new_tab_always');
 	},
 
+	doingSearch : false,
+
 	init : function()
 	{
 		window.removeEventListener('load', this, false);
@@ -47,19 +49,17 @@ var Bookmarks2PaneService = {
 
 		if (this.isPlaces) { // Firefox 3
 			document.getElementById('bookmarks-content-view').setAttribute('collapsed', true);
-
 			this.contentTree = document.getElementById('places-content-view');
-			this.initPlaces();
 			this.mainTree.addEventListener('select', this, false);
 			this.contentTree.addEventListener('select', this, false);
+			this.initPlaces();
 		}
 		else { // Firefox 2
 			document.getElementById('places-content-view').setAttribute('collapsed', true);
-
 			this.contentTree = document.getElementById('bookmarks-content-view');
-			window.setTimeout('Bookmarks2PaneService.delayedInitBookmarks()', 0);
 			this.overrideTree(this.mainTree, 'main');
 			this.overrideTree(this.contentTree, 'content');
+			window.setTimeout('Bookmarks2PaneService.delayedInitBookmarks()', 0);
 		}
 		this.contentTree.removeAttribute('collapsed', true);
 
@@ -88,20 +88,11 @@ var Bookmarks2PaneService = {
 			case 'select': // for Firefox 3
 				var tree = aEvent.currentTarget;
 				this.currentTree = tree;
-				switch (tree.selectedNode.type)
-				{
-					case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
-					case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
-						this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.folderItemId;
-						break;
-					case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
-					case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
-						this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.uri;
-						break;
-					default:
-						return;
-				}
-				this.contentLabel.value = tree.selectedNode.title;
+
+				var event = document.createEvent('Events');
+				event.initEvent('Bookmarks2PaneOnFolderSelect', false, true);
+				event.targetQuery = 'selection';
+				tree.dispatchEvent(event);
 				break;
 
 			case 'click':
@@ -198,38 +189,83 @@ var Bookmarks2PaneService = {
 
 	onTargetChange : function(aEvent)
 	{
-		var tree = Bookmarks2PaneService.contentTree;
+		if (this.isPlaces)
+			this.onTargetChangePlaces(aEvent);
+		else
+			this.onTargetChangeBookmarks(aEvent);
+	},
+	onTargetChangePlaces : function(aEvent)
+	{
+		var tree = aEvent.currentTarget;
 		if (aEvent.targetQuery == 'selection') {
-			Bookmarks2PaneService.showHideFolderTree(true);
+			switch (tree.selectedNode.type)
+			{
+				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
+				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
+					this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.folderItemId;
+					break;
+				case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
+				case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
+					this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.uri;
+					break;
+				default:
+					return;
+			}
+			this.contentLabel.value = tree.selectedNode.title;
+			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
+			window.setTimeout(this.onTargetChangeCallback, 0);
+		}
+		else {
+			if (!aEvent.targetQuery) {
+				if (this.lastTitle) {
+					this.contentLabel.value = this.lastTitle;
+					this.lastTitle = '';
+				}
+				this.showHideForSearch(true);
+			}
+			else {
+				this.lastTitle = this.contentLabel.value;
+				this.contentLabel.value = '';
+				this.showHideForSearch(false);
+			}
+		}
+	},
+	onTargetChangeBookmarks : function(aEvent)
+	{
+		var tree = this.contentTree;
+		if (aEvent.targetQuery == 'selection') {
+			Bookmarks2PaneService.showHideForSearch(true);
 
-			var selection = Bookmarks2PaneService.mainTree._selection;
+			var selection = this.mainTree._selection;
 			tree.setAttribute('ref', selection.item[0].Value);
 			tree.tree.setAttribute('ref', selection.item[0].Value);
 			tree.treeBuilder.rebuild();
 
-			Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(selection.item[0], 'http://home.netscape.com/NC-rdf#Name');
+			this.contentLabel.value = BookmarksUtils.getProperty(selection.item[0], 'http://home.netscape.com/NC-rdf#Name');
 
 			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', selection.item[0].Value);
 
-			window.setTimeout(Bookmarks2PaneService.onTargetChangeCallback, 0);
+			window.setTimeout(this.onTargetChangeCallback, 0);
 		}
 		else {
 			if (!aEvent.targetQuery) {
+				this.doingSearch = false;
 				tree.setAttribute('ref', tree.originalRef);
 				tree.tree.setAttribute('ref', tree.originalRef);
-				Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(tree.originalRef), 'http://home.netscape.com/NC-rdf#Name');
+				this.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(tree.originalRef), 'http://home.netscape.com/NC-rdf#Name');
 
-				Bookmarks2PaneService.showHideFolderTree(true);
+				this.showHideForSearch(true);
 			}
 			else {
+				this.doingSearch = true;
 				if (!tree.originalRef) {
 					tree.originalRef = tree.getAttribute('ref');
 				}
 				tree.setAttribute('ref', aEvent.targetQuery);
 				tree.tree.setAttribute('ref', aEvent.targetQuery);
-				Bookmarks2PaneService.contentLabel.value = '';
+				this.contentLabel.value = '';
 
-				Bookmarks2PaneService.showHideFolderTree(false);
+				this.showHideForSearch(false);
 			}
 		}
 	},
@@ -262,6 +298,8 @@ var Bookmarks2PaneService = {
 			}
 			event.targetQuery = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput);
 		}
+
+		return event;
 	},
 
 
@@ -285,7 +323,10 @@ var Bookmarks2PaneService = {
 						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&',
 						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT',
 					') ?',
-						'this.selection.tree.element == Bookmarks2PaneService.mainTree :',
+						'(',
+							'this.selection.tree.element == Bookmarks2PaneService.mainTree &&',
+							'!Bookmarks2PaneService.doingSearch',
+						') :',
 						'(',
 							'this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&',
 							'curChild.parent.folderItemId != aContainer.folderItemId*/',
@@ -300,6 +341,9 @@ var Bookmarks2PaneService = {
 
 		eval('window.searchBookmarks = '+
 			window.searchBookmarks.toSource().replace(
+				'{',
+				'$& Bookmarks2PaneService.doingSearch = aSearchString ? true : false ;'
+			).replace(
 				/(\}\)?)$/,
 				[
 				'Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));',
@@ -307,6 +351,11 @@ var Bookmarks2PaneService = {
 				].join('')
 			)
 		);
+
+		var lastPlace = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || '';
+		if (lastPlace.indexOf('place:') == 0) {
+			this.contentTree.place = lastPlace;
+		}
 	},
 
 
@@ -529,16 +578,17 @@ var Bookmarks2PaneService = {
 
 
 
-	showHideFolderTree : function(aShow)
+	showHideForSearch : function(aShow, aContent)
 	{
+		var tree = aContent ? this.contentTree : this.mainTree ;
 		if (aShow) {
-			this.mainTree.removeAttribute('collapsed');
+			tree.removeAttribute('collapsed');
 			this.contentLabelBox.removeAttribute('collapsed');
 			this.dustbox.removeAttribute('collapsed');
 			this.splitter.removeAttribute('collapsed');
 		}
 		else {
-			this.mainTree.setAttribute('collapsed', true);
+			tree.setAttribute('collapsed', true);
 			this.contentLabelBox.setAttribute('collapsed', true);
 			this.dustbox.setAttribute('collapsed', true);
 			this.splitter.setAttribute('collapsed', true);
@@ -633,7 +683,7 @@ var Bookmarks2PaneService = {
 				'window.libfOverlayBP.locateInFolders = '+
 				window.libfOverlayBP.locateInFolders.toSource().replace(
 					'{',
-					'{ Bookmarks2PaneService.showHideFolderTree(true); '
+					'{ Bookmarks2PaneService.showHideForSearch(true, true); '
 				).replace(
 					/libfOverlayBP\.bookmarksView/g,
 					'Bookmarks2PaneService.contentTree'
