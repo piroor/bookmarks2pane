@@ -353,11 +353,30 @@ var Bookmarks2PaneService = {
 			)
 		);
 
+		eval('PlacesUIUtils.openNodeWithEvent = '+
+			PlacesUIUtils.openNodeWithEvent.toSource().replace(
+				'whereToOpenLink',
+				'Bookmarks2PaneService.$&'
+			)
+		);
+
 		var lastPlace = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
 			this.contentLabel.value = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_title') || '';
 			this.contentTree.place = lastPlace;
 		}
+	},
+
+	whereToOpenLink : function(aEvent)
+	{
+		var where = whereToOpenLink(aEvent);
+		if (this.shouldOpenNewTab) {
+			if (where == 'current')
+				where = 'tab';
+			else if (where.indexOf('tab') == 0)
+				where = 'current';
+		}
+		return where;
 	},
 
 
