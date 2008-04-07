@@ -530,6 +530,9 @@ var Bookmarks2PaneService = {
 	dustboxDNDObserver : {
 		onDrop : function(aEvent, aTransferData, aSession)
 		{
+			if (!aSession.sourceNode ||
+				aSession.sourceNode.parentNode != Bookmarks2PaneService.currentTree)
+				return;
 			Bookmarks2PaneService.deleteCurrentSelection();
 		},
 		onDragOver : function() {},
