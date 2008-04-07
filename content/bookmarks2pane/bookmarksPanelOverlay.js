@@ -541,7 +541,7 @@ var Bookmarks2PaneService = {
 				var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES;
 				types.forEach(function(aType) {
 					flavours.appendFlavour(aType);
-				}
+				});
 			}
 			else {
 				flavours.appendFlavour('moz/rdfitem');
