@@ -212,6 +212,7 @@ var Bookmarks2PaneService = {
 					return;
 			}
 			this.contentLabel.value = tree.selectedNode.title;
+			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_title', this.contentLabel.value);
 			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
 			window.setTimeout(this.onTargetChangeCallback, 0);
 		}
@@ -354,6 +355,7 @@ var Bookmarks2PaneService = {
 
 		var lastPlace = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
+			this.contentLabel.value = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_title') || '';
 			this.contentTree.place = lastPlace;
 		}
 	},
