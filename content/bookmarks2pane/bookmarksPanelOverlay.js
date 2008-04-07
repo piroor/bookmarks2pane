@@ -13,8 +13,6 @@
 
 var Bookmarks2PaneService = {
 
-	initialized : false,
-
 	get isPlaces()
 	{
 		return 'SidebarUtils' in window;
@@ -43,6 +41,10 @@ var Bookmarks2PaneService = {
 
 		this.currentTree = this.mainTree;
 
+		this.mainTree.addEventListener('click', this, false);
+		this.mainTree.addEventListener('keypress', this, false);
+		this.mainTree.addEventListener('Bookmarks2PaneOnFolderSelect', this, false);
+
 		if (this.isPlaces) { // Firefox 3
 			document.getElementById('bookmarks-content-view').setAttribute('collapsed', true);
 
@@ -67,6 +69,11 @@ var Bookmarks2PaneService = {
 	destroy : function()
 	{
 		window.removeEventListener('unload', this, false);
+
+		this.mainTree.removeEventListener('click', this, false);
+		this.mainTree.removeEventListener('keypress', this, false);
+		this.mainTree.removeEventListener('Bookmarks2PaneOnFolderSelect', this, false);
+
 		if (this.isPlaces) {
 			this.mainTree.removeEventListener('select', this, false);
 			this.contentTree.removeEventListener('select', this, false);
@@ -97,6 +104,18 @@ var Bookmarks2PaneService = {
 				this.contentLabel.value = tree.selectedNode.title;
 				break;
 
+			case 'click':
+				this.onToggleOpenState(aEvent);
+				break;
+
+			case 'keypress':
+				this.onToggleOpenStateKey(aEvent);
+				break;
+
+			case 'Bookmarks2PaneOnFolderSelect':
+				this.onTargetChange(aEvent);
+				break;
+
 			case 'load':
 				this.init();
 				break;
@@ -106,6 +125,146 @@ var Bookmarks2PaneService = {
 				break;
 		}
 	},
+
+	onToggleOpenStateKey : function(aEvent)
+	{
+		if (aEvent.keyCode == 13)
+			Bookmarks2PaneService.onToggleOpenState(aEvent);
+	},
+
+	// from BX (http://tkm.s31.xrea.com/xul/bx.shtml, made by plus7)
+	onToggleOpenState: function (aEvent)
+	{
+		if (!Bookmarks2PaneService.shouldOpenOnlyOneTree) return;
+
+		var tree = Bookmarks2PaneService.currentTree;
+		var view = tree.treeBoxObject.view;
+
+		var row = {};
+		var col = {};
+		var obj = {};
+		tree.treeBoxObject.getCellAt(aEvent.clientX, aEvent.clientY, row, col, obj);
+		row = row.value;
+
+		if (/*row == -1 ||*/ aEvent.type != 'keypress' && obj.value == 'twisty') return;
+
+
+		if (aEvent.type != 'keypress' && aEvent.button != 0){
+			return;
+		}
+		var currentIndex = tree.currentIndex;
+		if(!view.isContainer(currentIndex)){
+			return;
+		}
+		var firstVisibleRow = tree.treeBoxObject.getFirstVisibleRow();
+		if (
+			aEvent.type != 'keypress' &&
+			view.isContainer(currentIndex) &&
+			(
+				!view.isContainerOpen(currentIndex) ||
+				(
+					tree.lastIndex !== void(0) &&
+					tree.lastIndex == currentIndex
+				)
+			)
+			)
+			view.toggleOpenState(currentIndex);
+		var rowCount = tree.treeBoxObject.view.rowCount;
+		var arrParent = new Array();
+		var tmp = currentIndex;
+		while (tmp != -1)
+		{
+			arrParent.push(tmp);
+			tmp = view.getParentIndex(tmp);
+		}
+		arrParent.reverse();
+		for (var i = rowCount-1; i >= 0; i--)
+		{//コンテナでかつopenでかつ現在選択されているものの親でない
+			if (arrParent[arrParent.length-1] == i){
+				arrParent.pop();
+			}
+			else {
+				if (view.isContainer(i) && view.isContainerOpen(i)){
+						view.toggleOpenState(i);
+				}
+			}
+		}
+		var distance = tree.currentIndex - (currentIndex - firstVisibleRow);
+		tree.treeBoxObject.scrollToRow(distance >= 0 ? distance : 0);
+		aEvent.preventDefault();
+
+		tree.lastIndex = currentIndex;
+	},
+
+	onTargetChange : function(aEvent)
+	{
+		var tree = Bookmarks2PaneService.contentTree;
+		if (aEvent.targetQuery == 'selection') {
+			Bookmarks2PaneService.showHideFolderTree(true);
+
+			var selection = Bookmarks2PaneService.mainTree._selection;
+			tree.setAttribute('ref', selection.item[0].Value);
+			tree.tree.setAttribute('ref', selection.item[0].Value);
+			tree.treeBuilder.rebuild();
+
+			Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(selection.item[0], 'http://home.netscape.com/NC-rdf#Name');
+
+			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', selection.item[0].Value);
+
+			window.setTimeout(Bookmarks2PaneService.onTargetChangeCallback, 0);
+		}
+		else {
+			if (!aEvent.targetQuery) {
+				tree.setAttribute('ref', tree.originalRef);
+				tree.tree.setAttribute('ref', tree.originalRef);
+				Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(tree.originalRef), 'http://home.netscape.com/NC-rdf#Name');
+
+				Bookmarks2PaneService.showHideFolderTree(true);
+			}
+			else {
+				if (!tree.originalRef) {
+					tree.originalRef = tree.getAttribute('ref');
+				}
+				tree.setAttribute('ref', aEvent.targetQuery);
+				tree.tree.setAttribute('ref', aEvent.targetQuery);
+				Bookmarks2PaneService.contentLabel.value = '';
+
+				Bookmarks2PaneService.showHideFolderTree(false);
+			}
+		}
+	},
+	onTargetChangeCallback : function()
+	{
+		Bookmarks2PaneService.contentTree.treeBoxObject.scrollToRow(0);
+	},
+
+
+	createSearchEvent : function(aInput)
+	{
+		var event = document.createEvent('Events');
+		event.initEvent('Bookmarks2PaneOnFolderSelect', false, true);
+
+		if (!aInput) {
+			event.targetQuery = null;
+		}
+		else {
+			var match = 'Name';
+			if ('gBooxSearchIn' in window) { // hack for Boox
+				switch (gBooxSearchIn)
+				{
+					case 'url':         match = 'URL';         break;
+					case 'keywords':    match = 'ShortcutURL'; break;
+					case 'description': match = 'Description'; break;
+					case 'title':
+					default:
+						break;
+				}
+			}
+			event.targetQuery = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput);
+		}
+	},
+
+
 
 
 	// Places
@@ -138,6 +297,16 @@ var Bookmarks2PaneService = {
 			)
 		);
 		init();
+
+		eval('window.searchBookmarks = '+
+			window.searchBookmarks.toSource().replace(
+				/(\}\)?)$/,
+				[
+				'Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));',
+				'$1'
+				].join('')
+			)
+		);
 	},
 
 
@@ -218,10 +387,6 @@ var Bookmarks2PaneService = {
 
 			aTree.searchBookmarks = this.treeBookmarksImplementations.searchBookmarks;
 			aTree.onFolderContentOpen = this.treeBookmarksImplementations.onFolderTreeFolderContentOpen;
-
-			aTree.addEventListener('click', this.onToggleOpenState, false);
-			aTree.addEventListener('keypress', this.onToggleOpenStateKey, false);
-			aTree.addEventListener('Bookmarks2PaneOnFolderSelect', this.onTargetChange, false);
 		}
 
 		aTree.treeBuilder.rebuild();
@@ -300,29 +465,7 @@ var Bookmarks2PaneService = {
 					this.tree.view.selection
 				).currentIndex = -1;
 
-			var event = document.createEvent('Events');
-			event.initEvent('Bookmarks2PaneOnFolderSelect', false, true);
-
-			if (!aInput) {
-				event.targetRef = null;
-			}
-			else {
-				var match = 'Name';
-				if ('gBooxSearchIn' in window) { // hack for Boox
-					switch (gBooxSearchIn)
-					{
-						case 'url':         match = 'URL';         break;
-						case 'keywords':    match = 'ShortcutURL'; break;
-						case 'description': match = 'Description'; break;
-						case 'title':
-						default:
-							break;
-					}
-				}
-				event.targetRef = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput);
-			}
-
-			this.dispatchEvent(event);
+			this.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aInput));
 		},
 
 		onFolderTreeFolderContentOpen : function(aEvent, aClickCount, aSelection)
@@ -349,7 +492,7 @@ var Bookmarks2PaneService = {
 
 			var event = document.createEvent('Events');
 			event.initEvent('Bookmarks2PaneOnFolderSelect', false, true);
-			event.targetRef  = 'selection';
+			event.targetQuery  = 'selection';
 			this.dispatchEvent(event);
 
 			return true;
@@ -383,117 +526,8 @@ var Bookmarks2PaneService = {
 
 	},
 
-	onToggleOpenStateKey : function(aEvent)
-	{
-		if (aEvent.keyCode == 13)
-			Bookmarks2PaneService.onToggleOpenState(aEvent);
-	},
-
-	// from BX (http://tkm.s31.xrea.com/xul/bx.shtml, made by plus7)
-	onToggleOpenState: function (aEvent)
-	{
-		if (!Bookmarks2PaneService.shouldOpenOnlyOneTree) return;
-
-		var tree = Bookmarks2PaneService.currentTree;
-		var view = tree.treeBoxObject.view;
-
-		var row = {};
-		var col = {};
-		var obj = {};
-		tree.treeBoxObject.getCellAt(aEvent.clientX, aEvent.clientY, row, col, obj);
-		row = row.value;
-
-		if (/*row == -1 ||*/ aEvent.type != 'keypress' && obj.value == 'twisty') return;
 
 
-		if (aEvent.type != 'keypress' && aEvent.button != 0){
-			return;
-		}
-		var currentIndex = tree.currentIndex;
-		if(!view.isContainer(currentIndex)){
-			return;
-		}
-		var firstVisibleRow = tree.treeBoxObject.getFirstVisibleRow();
-		if (
-			aEvent.type != 'keypress' &&
-			view.isContainer(currentIndex) &&
-			(
-				!view.isContainerOpen(currentIndex) ||
-				(
-					tree.lastIndex !== void(0) &&
-					tree.lastIndex == currentIndex
-				)
-			)
-			)
-			view.toggleOpenState(currentIndex);
-		var rowCount = tree.treeBoxObject.view.rowCount;
-		var arrParent = new Array();
-		var tmp = currentIndex;
-		while (tmp != -1)
-		{
-			arrParent.push(tmp);
-			tmp = view.getParentIndex(tmp);
-		}
-		arrParent.reverse();
-		for (var i = rowCount-1; i >= 0; i--)
-		{//コンテナでかつopenでかつ現在選択されているものの親でない
-			if (arrParent[arrParent.length-1] == i){
-				arrParent.pop();
-			}
-			else {
-				if (view.isContainer(i) && view.isContainerOpen(i)){
-						view.toggleOpenState(i);
-				}
-			}
-		}
-		var distance = tree.currentIndex - (currentIndex - firstVisibleRow);
-		tree.treeBoxObject.scrollToRow(distance >= 0 ? distance : 0);
-		aEvent.preventDefault();
-
-		tree.lastIndex = currentIndex;
-	},
-
-	onTargetChange : function(aEvent)
-	{
-		var tree = Bookmarks2PaneService.contentTree;
-		if (aEvent.targetRef == 'selection') {
-			Bookmarks2PaneService.showHideFolderTree(true);
-
-			var selection = Bookmarks2PaneService.mainTree._selection;
-			tree.setAttribute('ref', selection.item[0].Value);
-			tree.tree.setAttribute('ref', selection.item[0].Value);
-			tree.treeBuilder.rebuild();
-
-			Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(selection.item[0], 'http://home.netscape.com/NC-rdf#Name');
-
-			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', selection.item[0].Value);
-
-			window.setTimeout(Bookmarks2PaneService.onTargetChangeCallback, 0);
-		}
-		else {
-			if (!aEvent.targetRef) {
-				tree.setAttribute('ref', tree.originalRef);
-				tree.tree.setAttribute('ref', tree.originalRef);
-				Bookmarks2PaneService.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(tree.originalRef), 'http://home.netscape.com/NC-rdf#Name');
-
-				Bookmarks2PaneService.showHideFolderTree(true);
-			}
-			else {
-				if (!tree.originalRef) {
-					tree.originalRef = tree.getAttribute('ref');
-				}
-				tree.setAttribute('ref', aEvent.targetRef);
-				tree.tree.setAttribute('ref', aEvent.targetRef);
-				Bookmarks2PaneService.contentLabel.value = '';
-
-				Bookmarks2PaneService.showHideFolderTree(false);
-			}
-		}
-	},
-	onTargetChangeCallback : function()
-	{
-		Bookmarks2PaneService.contentTree.treeBoxObject.scrollToRow(0);
-	},
 
 	showHideFolderTree : function(aShow)
 	{
@@ -567,10 +601,10 @@ var Bookmarks2PaneService = {
 					'var event = document.createEvent("Events"); event.initEvent("Bookmarks2PaneOnFolderSelect", false, true); $1'
 				).replace(
 					/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],\s*bookmarkView\.originalRef\s*\)/,
-					'event.targetRef = null'
+					'event.targetQuery = null'
 				).replace(
 					/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],/g,
-					'event.targetRef = ('
+					'event.targetQuery = ('
 				).replace(
 					/\}(\)?)$/,
 					'; Bookmarks2PaneService.mainTree.dispatchEvent(event);}$1'
