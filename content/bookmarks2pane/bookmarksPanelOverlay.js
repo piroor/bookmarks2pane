@@ -212,8 +212,8 @@ var Bookmarks2PaneService = {
 					return;
 			}
 			this.contentLabel.value = tree.selectedNode.title;
-			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_title', this.contentLabel.value);
 			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
+			nsPreferences.setIntPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId);
 			window.setTimeout(this.onTargetChangeCallback, 0);
 		}
 		else {
@@ -362,7 +362,15 @@ var Bookmarks2PaneService = {
 
 		var lastPlace = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
-			this.contentLabel.value = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_title') || '';
+			var bmsv = Components
+					.classes['@mozilla.org/browser/nav-bookmarks-service;1']
+					.getService(Components.interfaces.nsINavBookmarksService);
+			try {
+				var title = bmsv.getItemTitle(nsPreferences.getIntPref('bookmarks2pane.last_selected_folder_id'));
+				this.contentLabel.value = title;
+			}
+			catch(e) {
+			}
 			this.contentTree.place = lastPlace;
 		}
 	},
