@@ -222,12 +222,12 @@ var Bookmarks2PaneService = {
 					this.contentLabel.value = this.lastTitle;
 					this.lastTitle = '';
 				}
-				this.showHideForSearch(true);
+				this.showHideTreeForSearch(true);
 			}
 			else {
 				this.lastTitle = this.contentLabel.value;
 				this.contentLabel.value = '';
-				this.showHideForSearch(false);
+				this.showHideTreeForSearch(false);
 			}
 		}
 	},
@@ -235,7 +235,7 @@ var Bookmarks2PaneService = {
 	{
 		var tree = this.contentTree;
 		if (aEvent.targetQuery == 'selection') {
-			Bookmarks2PaneService.showHideForSearch(true);
+			Bookmarks2PaneService.showHideTreeForSearch(true);
 
 			var selection = this.mainTree._selection;
 			tree.setAttribute('ref', selection.item[0].Value);
@@ -255,7 +255,7 @@ var Bookmarks2PaneService = {
 				tree.tree.setAttribute('ref', tree.originalRef);
 				this.contentLabel.value = BookmarksUtils.getProperty(RDF.GetResource(tree.originalRef), 'http://home.netscape.com/NC-rdf#Name');
 
-				this.showHideForSearch(true);
+				this.showHideTreeForSearch(true);
 			}
 			else {
 				this.doingSearch = true;
@@ -266,7 +266,7 @@ var Bookmarks2PaneService = {
 				tree.tree.setAttribute('ref', aEvent.targetQuery);
 				this.contentLabel.value = '';
 
-				this.showHideForSearch(false);
+				this.showHideTreeForSearch(false);
 			}
 		}
 	},
@@ -607,9 +607,9 @@ var Bookmarks2PaneService = {
 
 
 
-	showHideForSearch : function(aShow, aContent)
+	showHideTreeForSearch : function(aShow)
 	{
-		var tree = aContent ? this.contentTree : this.mainTree ;
+		var tree = this.isPlaces ? this.contentTree : this.mainTree ;
 		if (aShow) {
 			tree.removeAttribute('collapsed');
 			this.contentLabelBox.removeAttribute('collapsed');
@@ -701,7 +701,7 @@ var Bookmarks2PaneService = {
 					'while (tree.parentNode && tree.localName != "bookmarks-tree") {'+
 						'tree = tree.parentNode;'+
 					'};'+
-					'if (!tree) { return false; } else { tree = tree.tree; };'
+					'if (!tree) { return false; } else if (tree.tree) { tree = tree.tree; };'
 				)
 			);
 
@@ -712,7 +712,7 @@ var Bookmarks2PaneService = {
 				'window.libfOverlayBP.locateInFolders = '+
 				window.libfOverlayBP.locateInFolders.toSource().replace(
 					'{',
-					'{ Bookmarks2PaneService.showHideForSearch(true, true); '
+					'{ Bookmarks2PaneService.showHideTreeForSearch(true); '
 				).replace(
 					/libfOverlayBP\.bookmarksView/g,
 					'Bookmarks2PaneService.contentTree'
