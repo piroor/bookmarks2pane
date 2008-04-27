@@ -61,7 +61,8 @@ var Bookmarks2PaneService = {
 			this.overrideTree(this.contentTree, 'content');
 			window.setTimeout('Bookmarks2PaneService.delayedInitBookmarks()', 0);
 		}
-		this.contentTree.removeAttribute('collapsed', true);
+		this.contentTree.removeAttribute('collapsed');
+		this.showHideTreeForSearch(true);
 
 		this.hackForOtherExtensions();
 	},
@@ -144,13 +145,12 @@ var Bookmarks2PaneService = {
 			return;
 		}
 		var currentIndex = tree.currentIndex;
-		if(!view.isContainer(currentIndex)){
+		if (currentIndex < 0 || !view.isContainer(currentIndex)) {
 			return;
 		}
 		var firstVisibleRow = tree.treeBoxObject.getFirstVisibleRow();
 		if (
 			aEvent.type != 'keypress' &&
-			view.isContainer(currentIndex) &&
 			(
 				!view.isContainerOpen(currentIndex) ||
 				(
@@ -197,7 +197,8 @@ var Bookmarks2PaneService = {
 	onTargetChangePlaces : function(aEvent)
 	{
 		var tree = aEvent.currentTarget;
-		if (aEvent.targetQuery == 'selection') {
+		if (aEvent.targetQuery == 'selection' &&
+			tree.selectedNode) {
 			switch (tree.selectedNode.type)
 			{
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
