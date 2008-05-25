@@ -17,9 +17,8 @@
 <script type="application/x-javascript" src="chrome://bookmarks2pane/content/bookmarksPanelOverlay.js"/>
 
 <page id="bookmarksPanel">
-	<splitter id="bookmarks-panes-splitter"
-		class="bookmarks-parts-for-2panes"/>
 	<vbox flex="1" id="bookmarks-content-box"
+		insertafter="bookmarks-view"
 		class="bookmarks-parts-for-2panes"
 		persist="height">
 		<hbox id="bookmarks-content-label-box">
@@ -54,6 +53,10 @@
 				flex="1"/>
 		</tree>
 	</vbox>
+	<splitter id="bookmarks-panes-splitter"
+		class="bookmarks-parts-for-2panes"
+		insertafter="bookmarks-view"/>
+
 	<hbox id="bookmarks-dustbox-container"
 		class="bookmarks-parts-for-2panes">
 		<toolbarbutton id="bookmarks-dustbox"
