@@ -20,7 +20,8 @@
 	<splitter id="bookmarks-panes-splitter"
 		class="bookmarks-parts-for-2panes"/>
 	<vbox flex="1" id="bookmarks-content-box"
-		class="bookmarks-parts-for-2panes">
+		class="bookmarks-parts-for-2panes"
+		persist="height">
 		<hbox id="bookmarks-content-label-box">
 			<label id="bookmarks-content-label"
 				value=""
