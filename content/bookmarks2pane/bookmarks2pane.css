@@ -5,3 +5,7 @@
 	display: none;
 }
 
+#bookmarks-dustbox:-moz-drag-over {
+	outline: 1px solid;
+}
+
