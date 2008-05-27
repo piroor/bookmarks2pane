@@ -1,4 +1,4 @@
-var version     = '0.4.2008042801',
+var version     = '0.4.2008052701',
 	displayName = '2 Pane Bookmarks',
 	appName     = 'bookmarks2pane',
 	author      = 'SHIMODA Hiroshi',
