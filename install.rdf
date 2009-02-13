@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="{FD61379B-066A-4afc-89DE-89FB24D907C2}"
                    em:name="2 Pane Bookmarks"
-                   em:version="0.4.2008052701"
+                   em:version="0.5.2009021401"
                    em:creator="SHIMODA Hiroshi"
                    em:description="shows the Bookmarks sidebar panel with 2 pane style like 0pera."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/bookmarks2pane/"
