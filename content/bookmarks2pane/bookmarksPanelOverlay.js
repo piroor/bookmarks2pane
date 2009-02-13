@@ -41,6 +41,7 @@ var Bookmarks2PaneService = {
 		this.mainTree.addEventListener('Bookmarks2PaneOnFolderSelect', this, false);
 
 		this.contentTree = document.getElementById('places-content-view');
+		this.contentTreeBox = document.getElementById('bookmarks-content-box');
 		this.mainTree.addEventListener('select', this, false);
 		this.contentTree.addEventListener('select', this, false);
 		this.initPlaces();
@@ -180,7 +181,7 @@ var Bookmarks2PaneService = {
 					break;
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
-					this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.uri;
+					this.contentTree.place = tree.selectedNode.uri;
 					break;
 				default:
 					return;
@@ -321,16 +322,13 @@ var Bookmarks2PaneService = {
   
 	showHideTreeForSearch : function(aShow) 
 	{
-		var tree = this.contentTree;
 		if (aShow) {
-			tree.removeAttribute('collapsed');
-			this.contentLabelBox.removeAttribute('collapsed');
+			this.contentTreeBox.removeAttribute('collapsed');
 			this.dustbox.removeAttribute('collapsed');
 			this.splitter.removeAttribute('collapsed');
 		}
 		else {
-			tree.setAttribute('collapsed', true);
-			this.contentLabelBox.setAttribute('collapsed', true);
+			this.contentTreeBox.setAttribute('collapsed', true);
 			this.dustbox.setAttribute('collapsed', true);
 			this.splitter.setAttribute('collapsed', true);
 		}
