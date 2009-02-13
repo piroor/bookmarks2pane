@@ -40,7 +40,6 @@ var Bookmarks2PaneService = {
 		this.mainTree.addEventListener('keypress', this, false);
 		this.mainTree.addEventListener('Bookmarks2PaneOnFolderSelect', this, false);
 
-		document.getElementById('bookmarks-content-view').setAttribute('collapsed', true);
 		this.contentTree = document.getElementById('places-content-view');
 		this.mainTree.addEventListener('select', this, false);
 		this.contentTree.addEventListener('select', this, false);
@@ -177,7 +176,7 @@ var Bookmarks2PaneService = {
 			{
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
-					this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.folderItemId;
+					this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.itemId;
 					break;
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:

@@ -27,10 +27,6 @@
 				flex="1"
 				crop="end"/>
 		</hbox>
-		<bookmarks-tree id="bookmarks-content-view"
-			type="single-column" flex="1"
-			ref="rdf:null"
-			ondraggesture="if (event.originalTarget.localName == 'treechildren') nsDragAndDrop.startDrag(event, this.DNDObserver);"/>
 		<tree id="places-content-view"
 			collapsed="true"
 			class="sidebar-placesTree"
