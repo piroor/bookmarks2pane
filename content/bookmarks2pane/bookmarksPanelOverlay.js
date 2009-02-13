@@ -200,7 +200,9 @@ var Bookmarks2PaneService = {
 				this.showHideTreeForSearch(true);
 			}
 			else {
-				this.lastTitle = this.contentLabel.value;
+				if (this.contentLabel.value) {
+					this.lastTitle = this.contentLabel.value;
+				}
 				this.contentLabel.value = '';
 				this.showHideTreeForSearch(false);
 			}
