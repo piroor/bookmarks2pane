@@ -190,7 +190,7 @@ var Bookmarks2PaneService = {
 			}
 			this.contentLabel.value = tree.selectedNode.title;
 			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
-			nsPreferences.setIntPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId);
+			nsPreferences.setIntPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
 			window.setTimeout(this.onTargetChangeCallback, 0);
 		}
 		else {
