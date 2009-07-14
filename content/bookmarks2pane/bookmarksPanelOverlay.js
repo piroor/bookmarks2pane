@@ -177,7 +177,9 @@ var Bookmarks2PaneService = {
 			{
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
-					this.contentTree.place = 'place:queryType=1&folder=' + tree.selectedNode.itemId;
+					// folderItemId is for root folders
+					var id = tree.selectedNode.folderItemId || tree.selectedNode.itemId;
+					this.contentTree.place = 'place:queryType=1&folder=' + id;
 					break;
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
 				case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
