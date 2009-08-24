@@ -20,17 +20,11 @@
 		<preference id="bookmarks2pane.open_only_one_tree"
 			name="bookmarks2pane.open_only_one_tree"
 			type="bool"/>
-		<preference id="bookmarks2pane.open_new_tab_always"
-			name="bookmarks2pane.open_new_tab_always"
-			type="bool"/>
 	</preferences>
 
 	<checkbox label="&bookmarks2pane.pref.enabled;"
 		id="bookmarks2pane.enabled-check"
 		preference="bookmarks2pane.enabled"/>
-	<checkbox label="&bookmarks2pane.pref.open_new_tab_always;"
-		id="bookmarks2pane.open_new_tab_always-check"
-		preference="bookmarks2pane.open_new_tab_always"/>
 
 	<groupbox orient="vertical">
 		<caption label="&bookmarks2pane.pref.mode;"/>
