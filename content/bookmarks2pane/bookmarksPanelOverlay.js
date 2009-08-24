@@ -265,8 +265,8 @@ var Bookmarks2PaneService = {
 
 		eval('PlacesUIUtils.openNodeWithEvent = '+
 			PlacesUIUtils.openNodeWithEvent.toSource().replace(
-				'whereToOpenLink',
-				'Bookmarks2PaneService.$&'
+				'whereToOpenLink(aEvent)',
+				'Bookmarks2PaneService.whereToOpenLink($&, aEvent)'
 			)
 		);
 
@@ -285,16 +285,42 @@ var Bookmarks2PaneService = {
 		}
 	},
  
-	whereToOpenLink : function(aEvent) 
+	whereToOpenLink : function(aWhere, aEvent) 
 	{
-		var where = whereToOpenLink(aEvent);
 		if (this.shouldOpenNewTab) {
-			if (where == 'current')
-				where = 'tab';
-			else if (where.indexOf('tab') == 0)
-				where = 'current';
+			if ( // clicking on folder
+					aEvent &&
+					(
+						( // tree
+							aEvent.target.localName == 'treechildren' &&
+							aEvent.currentTarget.selectedNode &&
+							!PlacesUtils.nodeIsURI(aEvent.currentTarget.selectedNode) &&
+							PlacesUtils.nodeIsContainer(aEvent.currentTarget.selectedNode)
+						) ||
+						( // toolbar, menu
+							aEvent.originalTarget &&
+							aEvent.originalTarget.node &&
+							PlacesUtils.nodeIsContainer(aEvent.originalTarget.node)
+						)
+					)
+				)
+				return aWhere;
+
+			if (
+				aNode &&
+				PlacesUtils.nodeIsURI(aNode) &&
+				PlacesUIUtils.checkURLSecurity(aNode) &&
+				PlacesUtils.nodeIsBookmark(aNode) &&
+				aNode.uri.indexOf('javascript:') == 0
+				)
+				return aWhere;
+
+			if (aWhere == 'current')
+				aWhere = 'tab';
+			else if (aWhere.indexOf('tab') == 0)
+				aWhere = 'current';
 		}
-		return where;
+		return aWhere;
 	},
  
 	createSearchEvent : function(aInput) 
