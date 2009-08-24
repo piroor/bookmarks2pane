@@ -166,27 +166,28 @@ var Bookmarks2PaneService = {
 	onTargetChange : function(aEvent) 
 	{
 		var tree = aEvent.currentTarget;
-		if (aEvent.targetQuery == 'selection' &&
-			tree.selectedNode) {
-			switch (tree.selectedNode.type)
-			{
-				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
-				case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
-					// folderItemId is for root folders
-					var id = tree.selectedNode.folderItemId || tree.selectedNode.itemId;
-					this.contentTree.place = 'place:queryType=1&folder=' + id;
-					break;
-				case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
-				case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
-					this.contentTree.place = tree.selectedNode.uri;
-					break;
-				default:
-					return;
+		if (aEvent.targetQuery == 'selection') {
+			if (tree.selectedNode) {
+				switch (tree.selectedNode.type)
+				{
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER:
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT:
+						// folderItemId is for root folders
+						var id = tree.selectedNode.folderItemId || tree.selectedNode.itemId;
+						this.contentTree.place = 'place:queryType=1&folder=' + id;
+						break;
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY:
+					case Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER:
+						this.contentTree.place = tree.selectedNode.uri;
+						break;
+					default:
+						return;
+				}
+				this.contentLabel.value = tree.selectedNode.title;
+				nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
+				nsPreferences.setIntPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
+				window.setTimeout(this.onTargetChangeCallback, 0);
 			}
-			this.contentLabel.value = tree.selectedNode.title;
-			nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
-			nsPreferences.setIntPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
-			window.setTimeout(this.onTargetChangeCallback, 0);
 		}
 		else {
 			if (!aEvent.targetQuery) {
