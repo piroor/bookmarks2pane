@@ -16,11 +16,6 @@ var Bookmarks2PaneService = {
 		return nsPreferences.getBoolPref('bookmarks2pane.open_only_one_tree');
 	},
  
-	get shouldOpenNewTab() 
-	{
-		return nsPreferences.getBoolPref('bookmarks2pane.open_new_tab_always');
-	},
- 
 	doingSearch : false, 
  
 	init : function() 
@@ -263,13 +258,6 @@ var Bookmarks2PaneService = {
 			)
 		);
 
-		eval('PlacesUIUtils.openNodeWithEvent = '+
-			PlacesUIUtils.openNodeWithEvent.toSource().replace(
-				'whereToOpenLink(aEvent)',
-				'Bookmarks2PaneService.whereToOpenLink($&, aEvent)'
-			)
-		);
-
 		var lastPlace = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
 			var bmsv = Components
@@ -283,44 +271,6 @@ var Bookmarks2PaneService = {
 			}
 			this.contentTree.place = lastPlace;
 		}
-	},
- 
-	whereToOpenLink : function(aWhere, aEvent) 
-	{
-		if (this.shouldOpenNewTab) {
-			if ( // clicking on folder
-					aEvent &&
-					(
-						( // tree
-							aEvent.target.localName == 'treechildren' &&
-							aEvent.currentTarget.selectedNode &&
-							!PlacesUtils.nodeIsURI(aEvent.currentTarget.selectedNode) &&
-							PlacesUtils.nodeIsContainer(aEvent.currentTarget.selectedNode)
-						) ||
-						( // toolbar, menu
-							aEvent.originalTarget &&
-							aEvent.originalTarget.node &&
-							PlacesUtils.nodeIsContainer(aEvent.originalTarget.node)
-						)
-					)
-				)
-				return aWhere;
-
-			if (
-				aNode &&
-				PlacesUtils.nodeIsURI(aNode) &&
-				PlacesUIUtils.checkURLSecurity(aNode) &&
-				PlacesUtils.nodeIsBookmark(aNode) &&
-				aNode.uri.indexOf('javascript:') == 0
-				)
-				return aWhere;
-
-			if (aWhere == 'current')
-				aWhere = 'tab';
-			else if (aWhere.indexOf('tab') == 0)
-				aWhere = 'current';
-		}
-		return aWhere;
 	},
  
 	createSearchEvent : function(aInput) 

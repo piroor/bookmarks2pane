@@ -8,7 +8,6 @@
 <!ENTITY bookmarks2pane.pref.appearance "Nascondi">
 
 <!ENTITY bookmarks2pane.pref.enabled "Mostra la lista dei segnalibri in due colonne">
-<!ENTITY bookmarks2pane.pref.open_new_tab_always "Apri Sempre in una Nuova Scheda">
 
 <!ENTITY bookmarks2pane.pref.mode    "Modalità lista dei segnalibri">
 <!ENTITY bookmarks2pane.pref.mode.normal "Espandi le sottoliste">

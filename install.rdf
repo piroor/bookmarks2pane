@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="{FD61379B-066A-4afc-89DE-89FB24D907C2}"
                    em:name="2 Pane Bookmarks"
-                   em:version="0.5.2009071401"
+                   em:version="0.6.2009082401"
                    em:creator="SHIMODA Hiroshi"
                    em:description="shows the Bookmarks sidebar panel with 2 pane style like 0pera."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/bookmarks2pane/"
@@ -24,25 +24,41 @@
       <RDF:Description em:locale="en-US"
                        em:name="2 Pane Bookmarks"
                        em:description="shows the Bookmarks sidebar panel with 2 pane style like 0pera."
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en">
+        <em:translator>Jacen (sk-SK)</em:translator>
+        <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
+        <em:translator>DigitalMax (it-IT)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="ja-JP"
                        em:name="2ペインブックマーク"
                        em:description="「ブックマーク」サイドバーパネルを、Operaのような2ペイン表示にします。"
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html">
+        <em:translator>Jacen (sk-SK)</em:translator>
+        <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
+        <em:translator>DigitalMax (it-IT)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="hu-HU"
                        em:name="2 Pane Bookmarks"
                        em:description="Könyvjelzők megjelenítése az oldalsávon két ablakban"
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en">
+        <em:translator>Jacen (sk-SK)</em:translator>
+        <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
+        <em:translator>DigitalMax (it-IT)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="it-IT"
                        em:name="2 Pane Bookmarks"
                        em:description="Mostra i segnalibri in 2 colonne come il browser di Opera."
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en">
+        <em:translator>Jacen (sk-SK)</em:translator>
+        <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
+        <em:translator>DigitalMax (it-IT)</em:translator>
+      </RDF:Description>
     </em:localized>
 
 
