@@ -377,7 +377,7 @@ var Bookmarks2PaneService = {
 						return false;
 					else if (tree.tree)
 						tree = tree.tree;
-				]]>.toString();
+				]]>
 			));
 
 
