@@ -66,8 +66,8 @@ var Bookmarks2PaneService = {
 			case 'select':
 				var tree = aEvent.currentTarget;
 				this.currentTree = tree;
-				var event = document.createEvent('UIEvents');
-				event.initEvent('Bookmarks2PaneOnFolderSelect', false, true, window, 0);
+				var event = document.createEvent('Events');
+				event.initEvent('Bookmarks2PaneOnFolderSelect', false, false);
 				event.targetQuery = 'selection';
 				tree.dispatchEvent(event);
 				break;
@@ -276,8 +276,8 @@ var Bookmarks2PaneService = {
  
 	createSearchEvent : function(aInput) 
 	{
-		var event = document.createEvent('UIEvents');
-		event.initEvent('Bookmarks2PaneOnFolderSelect', false, true, window, 0);
+		var event = document.createEvent('Events');
+		event.initEvent('Bookmarks2PaneOnFolderSelect', false, false);
 
 		if (!aInput) {
 			event.targetQuery = null;
