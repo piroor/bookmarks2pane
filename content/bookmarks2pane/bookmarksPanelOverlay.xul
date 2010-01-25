@@ -1,20 +1,16 @@
 <?xml version="1.0"?>
-
-
-<?xml-stylesheet href="chrome://bookmarks2pane/content/bookmarks2pane.css" type="text/css"?>
-
+<?xml-stylesheet href="bookmarks2pane.css" type="text/css"?>
 <!DOCTYPE overlay [
 <!ENTITY % b2pDTD SYSTEM "chrome://bookmarks2pane/locale/">
 %b2pDTD;
 <!ENTITY % bmDTD SYSTEM "chrome://browser/locale/bookmarks/bookmarks.dtd">
 %bmDTD;
 ]>
-
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
-<script type="application/javascript" src="chrome://global/content/nsUserSettings.js"/>
-<script type="application/javascript" src="chrome://bookmarks2pane/content/bookmarksPanelOverlay.js"/>
+<script type="application/javascript" src="prefs.js"/>
+<script type="application/javascript" src="bookmarksPanelOverlay.js"/>
 
 <page id="bookmarksPanel">
 	<vbox flex="1" id="bookmarks-content-box"

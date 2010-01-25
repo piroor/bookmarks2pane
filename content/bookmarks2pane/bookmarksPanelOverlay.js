@@ -1,7 +1,7 @@
 (function() { 
 	var root = document.getElementById('bookmarksPanel');
 
-	if (nsPreferences.getBoolPref('bookmarks2pane.enabled')) {
+	if (this.getPref('bookmarks2pane.enabled')) {
 		root.setAttribute('panesCount', '2');
 	}
 	else {
@@ -13,7 +13,7 @@ var Bookmarks2PaneService = {
 	
 	get shouldOpenOnlyOneTree() 
 	{
-		return nsPreferences.getBoolPref('bookmarks2pane.open_only_one_tree');
+		return this.getPref('bookmarks2pane.open_only_one_tree');
 	},
  
 	doingSearch : false, 
@@ -184,8 +184,8 @@ var Bookmarks2PaneService = {
 						return;
 				}
 				this.contentLabel.value = tree.selectedNode.title;
-				nsPreferences.setUnicharPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
-				nsPreferences.setIntPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
+				this.setPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
+				this.setPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
 				window.setTimeout(this.onTargetChangeCallback, 0);
 			}
 		}
@@ -259,13 +259,13 @@ var Bookmarks2PaneService = {
 			)
 		);
 
-		var lastPlace = nsPreferences.copyUnicharPref('bookmarks2pane.last_selected_folder') || '';
+		var lastPlace = this.getPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
 			var bmsv = Components
 					.classes['@mozilla.org/browser/nav-bookmarks-service;1']
 					.getService(Components.interfaces.nsINavBookmarksService);
 			try {
-				var title = bmsv.getItemTitle(nsPreferences.getIntPref('bookmarks2pane.last_selected_folder_id'));
+				var title = bmsv.getItemTitle(this.getPref('bookmarks2pane.last_selected_folder_id'));
 				this.contentLabel.value = title;
 			}
 			catch(e) {
@@ -402,5 +402,7 @@ var Bookmarks2PaneService = {
 	}
   
 }; 
+Bookmarks2PaneService.__proto__ = window['piro.sakura.ne.jp'].prefs;
+
 window.addEventListener('load', Bookmarks2PaneService, false);
   
