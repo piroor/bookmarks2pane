@@ -335,7 +335,8 @@ var Bookmarks2PaneService = {
 		getSupportedFlavours : function()
 		{
 			var flavours = new FlavourSet();
-			var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES;
+			var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES || // Firefox 3 - 3.6
+						PlacesControllerDragHelper.GENERIC_VIEW_DROP_TYPES; // Firefox 3.7 or later
 			types.forEach(function(aType) {
 				flavours.appendFlavour(aType);
 			});
