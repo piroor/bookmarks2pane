@@ -252,7 +252,8 @@ var Bookmarks2PaneService = {
 					<![CDATA[$&
 						if (this.selection &&
 							this.selection.tree &&
-							this.selection.tree.element == Bookmarks2PaneService.mainTree) {
+							this.selection.tree.element == Bookmarks2PaneService.mainTree &&
+							!Bookmarks2PaneService.doingSearch) {
 							this._rows.splice(aFirstChildRow, cc);
 							return 0;
 						}
