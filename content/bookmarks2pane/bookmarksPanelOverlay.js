@@ -1,7 +1,7 @@
 (function() { 
 	var root = document.getElementById('bookmarksPanel');
 
-	if (this.getPref('bookmarks2pane.enabled')) {
+	if (window['piro.sakura.ne.jp'].prefs.getPref('bookmarks2pane.enabled')) {
 		root.setAttribute('panesCount', '2');
 	}
 	else {
