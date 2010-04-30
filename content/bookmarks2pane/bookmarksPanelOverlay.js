@@ -219,29 +219,28 @@ var Bookmarks2PaneService = {
 		eval('PlacesTreeView.prototype._buildVisibleSection = '+
 			PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
 				'var curChildType = curChild.type;',
-				[
-				'$&',
-				'if (',
-					'(',
-						'this.selection &&',
-						'this.selection.tree &&',
-						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER &&',
-						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY &&',
-						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&',
-						'curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT',
-					') ?',
-						'(',
-							'this.selection.tree.element == Bookmarks2PaneService.mainTree &&',
-							'!Bookmarks2PaneService.doingSearch',
-						') :',
-						'(',
-							'this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&',
-							'curChild.parent.folderItemId != aContainer.folderItemId*/',
-						')',
-					') {',
-					'continue;',
-				'}'
-				].join('')
+				<![CDATA[$&
+					if (
+						(
+							this.selection &&
+							this.selection.tree &&
+							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER &&
+							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY &&
+							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&
+							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT
+						) ?
+							(
+								this.selection.tree.element == Bookmarks2PaneService.mainTree &&
+								!Bookmarks2PaneService.doingSearch
+							) :
+							(
+								this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&
+								curChild.parent.folderItemId != aContainer.folderItemId*/
+							)
+						) {
+						continue;
+					}
+				]]>.toString()
 			)
 		);
 		init();
@@ -252,10 +251,9 @@ var Bookmarks2PaneService = {
 				'$& Bookmarks2PaneService.doingSearch = aSearchString ? true : false ;'
 			).replace(
 				/(\}\)?)$/,
-				[
-				'Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));',
-				'$1'
-				].join('')
+				<![CDATA[
+					Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));
+				$1]]>.toString()
 			)
 		);
 
