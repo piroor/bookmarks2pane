@@ -247,6 +247,16 @@ var Bookmarks2PaneService = {
 							continue;
 						}
 					]]>.toString().replace('FIX_INDEX', FIX_INDEX)
+				).replace( // Firefox 3.7 or later
+					'if (this._isPlainContainer(aContainer)) {',
+					<![CDATA[$&
+						if (this.selection &&
+							this.selection.tree &&
+							this.selection.tree.element == Bookmarks2PaneService.mainTree) {
+							this._rows.splice(aFirstChildRow, cc);
+							return 0;
+						}
+					]]>.toString()
 				)
 			);
 		}
