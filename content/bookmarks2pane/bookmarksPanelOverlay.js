@@ -216,33 +216,40 @@ var Bookmarks2PaneService = {
 	
 	initPlaces : function() 
 	{
-		eval('PlacesTreeView.prototype._buildVisibleSection = '+
-			PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
-				'var curChildType = curChild.type;',
-				<![CDATA[$&
-					if (
-						(
-							this.selection &&
-							this.selection.tree &&
-							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER &&
-							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY &&
-							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&
-							curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT
-						) ?
+		let (source = PlacesTreeView.prototype._buildVisibleSection.toSource()) {
+			let match = source.match(/(curChild._?viewIndex = -1;)/);
+			let FIX_INDEX = match ?
+					match[1] : // Firefox 3.0 - 3.6
+					'this._rows.splice(aFirstChildRow + rowsInserted, 1);' ; // Firefox 3.7 or later
+			eval('PlacesTreeView.prototype._buildVisibleSection = '+
+				source.replace(
+					/((?:var|let) curChildType = curChild.type;)/,
+					<![CDATA[$1
+						if (
 							(
-								this.selection.tree.element == Bookmarks2PaneService.mainTree &&
-								!Bookmarks2PaneService.doingSearch
-							) :
-							(
-								this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&
-								curChild.parent.folderItemId != aContainer.folderItemId*/
-							)
-						) {
-						continue;
-					}
-				]]>.toString()
-			)
-		);
+								this.selection &&
+								this.selection.tree &&
+								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER &&
+								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY &&
+								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&
+								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT
+							) ?
+								(
+									this.selection.tree.element == Bookmarks2PaneService.mainTree &&
+									!Bookmarks2PaneService.doingSearch
+								) :
+								(
+									this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&
+									curChild.parent.folderItemId != aContainer.folderItemId*/
+								)
+							) {
+							FIX_INDEX
+							continue;
+						}
+					]]>.toString().replace('FIX_INDEX', FIX_INDEX)
+				)
+			);
+		}
 		init();
 
 		eval('window.searchBookmarks = '+
