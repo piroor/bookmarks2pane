@@ -9,7 +9,6 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
-<script type="application/javascript" src="prefs.js"/>
 <script type="application/javascript" src="bookmarksPanelOverlay.js"/>
 
 <page id="bookmarksPanel">

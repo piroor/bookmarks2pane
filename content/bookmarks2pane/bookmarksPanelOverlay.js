@@ -419,7 +419,11 @@ var Bookmarks2PaneService = {
 	}
   
 }; 
-Bookmarks2PaneService.__proto__ = window['piro.sakura.ne.jp'].prefs;
+(function() {
+	var namespace = {};
+	Components.utils.import('resource://bookmarks2pane-modules/prefs.js', namespace);
+	Bookmarks2PaneService.__proto__ = namespace.prefs;
+})();
 
 window.addEventListener('load', Bookmarks2PaneService, false);
   
