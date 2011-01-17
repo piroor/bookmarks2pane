@@ -183,7 +183,9 @@ var Bookmarks2PaneService = {
 				this.contentLabel.value = tree.selectedNode.title;
 				this.setPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
 				this.setPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
-				window.setTimeout(this.onTargetChangeCallback, 0);
+				window.setTimeout(function(aSelf) {
+					aSelf.onTargetChangeCallback();
+				}, 0, this);
 			}
 		}
 		else {
@@ -206,7 +208,7 @@ var Bookmarks2PaneService = {
 	
 	onTargetChangeCallback : function() 
 	{
-		Bookmarks2PaneService.contentTree.treeBoxObject.scrollToRow(0);
+		this.contentTree.treeBoxObject.scrollToRow(0);
 	},
  
 	canDropToDustbox : function(aEvent)
