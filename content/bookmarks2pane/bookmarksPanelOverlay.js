@@ -217,8 +217,7 @@ var Bookmarks2PaneService = {
 		var dt = aEvent.dataTransfer;
 		if (this.canDropToDustboxType(aEvent)) {
 			dt.effectAllowed = dt.dropEffect = 'move';
-			if (aEvent.type == 'dragenter')
-				aEvent.preventDefault();
+			aEvent.preventDefault();
 			return true;
 		}
 		else {
