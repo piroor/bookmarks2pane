@@ -55,9 +55,9 @@ var Bookmarks2PaneService = {
 			case 'select':
 				var tree = aEvent.currentTarget;
 				this.currentTree = tree;
-				var event = document.createEvent('Events');
+				var event = document.createEvent('DataContainerEvent');
 				event.initEvent('Bookmarks2PaneOnFolderSelect', false, false);
-				event.targetQuery = 'selection';
+				event.setData('targetQuery', 'selection');
 				tree.dispatchEvent(event);
 				break;
 
@@ -163,7 +163,8 @@ var Bookmarks2PaneService = {
 	onTargetChange : function(aEvent) 
 	{
 		var tree = aEvent.currentTarget;
-		if (aEvent.targetQuery == 'selection') {
+		var query = aEvent.getData('targetQuery');
+		if (query == 'selection') {
 			if (tree.selectedNode) {
 				switch (tree.selectedNode.type)
 				{
@@ -189,7 +190,7 @@ var Bookmarks2PaneService = {
 			}
 		}
 		else {
-			if (!aEvent.targetQuery) {
+			if (!query) {
 				if (this.lastTitle) {
 					this.contentLabel.value = this.lastTitle;
 					this.lastTitle = '';
@@ -270,7 +271,7 @@ var Bookmarks2PaneService = {
 			let match = source.match(/(curChild._?viewIndex = -1;)/);
 			let FIX_INDEX = match ?
 					match[1] : // Firefox 3.0 - 3.6
-					'this._rows.splice(aFirstChildRow + rowsInserted, 1);' ; // Firefox 3.7 or later
+					'this._rows.splice(aFirstChildRow + rowsInserted, 1);' ; // Firefox 4-
 			eval('PlacesTreeView.prototype._buildVisibleSection = '+
 				source.replace(
 					/((?:var|let) curChildType = curChild.type;)/,
@@ -342,11 +343,11 @@ var Bookmarks2PaneService = {
  
 	createSearchEvent : function(aInput) 
 	{
-		var event = document.createEvent('Events');
+		var event = document.createEvent('DataContainerEvent');
 		event.initEvent('Bookmarks2PaneOnFolderSelect', false, false);
 
 		if (!aInput) {
-			event.targetQuery = null;
+			event.setData('targetQuery', null);
 		}
 		else {
 			var match = 'Name';
@@ -361,7 +362,7 @@ var Bookmarks2PaneService = {
 						break;
 				}
 			}
-			event.targetQuery = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput);
+			event.setData('targetQuery', 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput));
 		}
 
 		return event;
@@ -406,13 +407,13 @@ var Bookmarks2PaneService = {
 		if ('BddsearchBookmarks' in window)
 			eval('window.BddsearchBookmarks = '+window.BddsearchBookmarks.toSource().replace(
 				/(if\s*\(!aInput\))/,
-				'var event = document.createEvent("Events"); event.initEvent("Bookmarks2PaneOnFolderSelect", false, true); $1'
+				'var event = document.createEvent("DataContainerEvent"); event.initEvent("Bookmarks2PaneOnFolderSelect", false, true); $1'
 			).replace(
 				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],\s*bookmarkView\.originalRef\s*\)/,
-				'event.targetQuery = null'
+				'event.setData("targetQuery", null)'
 			).replace(
-				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],/g,
-				'event.targetQuery = ('
+				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],(.+)\)/g,
+				'event.setData("targetQuery", $1)'
 			).replace(
 				/\}(\)?)$/,
 				'; Bookmarks2PaneService.mainTree.dispatchEvent(event);}$1'
