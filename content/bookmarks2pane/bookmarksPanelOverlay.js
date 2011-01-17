@@ -80,6 +80,14 @@ var Bookmarks2PaneService = {
 			case 'unload':
 				this.destroy();
 				break;
+
+
+			case 'dragenter':
+			case 'dragover':
+				return this.canDropToDustbox(aEvent);
+
+			case 'drop':
+				return this.onDropToDustbox(aEvent);
 		}
 	},
 	
@@ -199,6 +207,57 @@ var Bookmarks2PaneService = {
 	onTargetChangeCallback : function() 
 	{
 		Bookmarks2PaneService.contentTree.treeBoxObject.scrollToRow(0);
+	},
+ 
+	canDropToDustbox : function(aEvent)
+	{
+		var dt = aEvent.dataTransfer;
+		if (this.canDropToDustboxType(aEvent)) {
+			dt.effectAllowed = dt.dropEffect = 'move';
+			if (aEvent.type == 'dragenter')
+				aEvent.preventDefault();
+			return true;
+		}
+		else {
+			dt.effectAllowed = dt.dropEffect = 'none';
+			return false;
+		}
+	},
+	canDropToDustboxType : function(aEvent)
+	{
+		var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES || // Firefox 3 - 3.6
+					PlacesControllerDragHelper.GENERIC_VIEW_DROP_TYPES; // Firefox 4-
+
+		var dt = aEvent.dataTransfer;
+		if (dt.mozItemCount < 1)
+			return false;
+
+		for (let i = 0, maxi = dt.mozItemCount; i < maxi; i++)
+		{
+			let itemTypes = dt.mozTypesAt(i);
+			if (!types.some(itemTypes.contains, itemTypes))
+				return false;
+		}
+		return true;
+	},
+ 
+	onDropToDustbox : function(aEvent)
+	{
+		if (!this.canDropToDustbox(aEvent))
+			return;
+
+		var session = this.currentDragSession;
+		if (!session.sourceNode ||
+			session.sourceNode.parentNode != this.currentTree)
+			return;
+
+		this.deleteCurrentSelection();
+	},
+	get currentDragSession() 
+	{
+		return Components.classes['@mozilla.org/widget/dragservice;1']
+				.getService(Components.interfaces.nsIDragService)
+				.getCurrentSession();
 	},
    
 	// Places 
@@ -325,28 +384,6 @@ var Bookmarks2PaneService = {
 	deleteCurrentSelection : function() 
 	{
 		this.currentTree.controller.remove('Remove Selection');
-	},
- 
-	dustboxDNDObserver : { 
-		onDrop : function(aEvent, aTransferData, aSession)
-		{
-			if (!aSession.sourceNode ||
-				aSession.sourceNode.parentNode != Bookmarks2PaneService.currentTree)
-				return;
-			Bookmarks2PaneService.deleteCurrentSelection();
-		},
-		onDragOver : function() {},
-		onDragExit : function() {},
-		getSupportedFlavours : function()
-		{
-			var flavours = new FlavourSet();
-			var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES || // Firefox 3 - 3.6
-						PlacesControllerDragHelper.GENERIC_VIEW_DROP_TYPES; // Firefox 4-
-			types.forEach(function(aType) {
-				flavours.appendFlavour(aType);
-			});
-			return flavours;
-		}
 	},
  
 	clearBookmarkLocation : function()

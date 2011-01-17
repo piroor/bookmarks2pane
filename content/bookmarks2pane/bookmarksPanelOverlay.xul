@@ -55,9 +55,9 @@
 			tooltiptext="&deleteCmd.label;"
 			label="&deleteCmd.label;"
 			oncommand="Bookmarks2PaneService.deleteCurrentSelection();"
-			ondragdrop="nsDragAndDrop.drop(event, Bookmarks2PaneService.dustboxDNDObserver);"
-			ondragover="nsDragAndDrop.dragOver(event, Bookmarks2PaneService.dustboxDNDObserver);"
-			ondragexit="nsDragAndDrop.dragExit(event, Bookmarks2PaneService.dustboxDNDObserver);"
+			ondragenter="Bookmarks2PaneService.handleEvent(event);"
+			ondragover="Bookmarks2PaneService.handleEvent(event);"
+			ondrop="Bookmarks2PaneService.handleEvent(event);"
 			style="cursor: default;"/>
 		<spacer flex="1"/>
 	</hbox>
