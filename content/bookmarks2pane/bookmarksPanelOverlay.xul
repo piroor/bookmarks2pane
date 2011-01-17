@@ -34,7 +34,7 @@
 			onkeypress="SidebarUtils.handleTreeKeyPress(event);"
 			onclick="SidebarUtils.handleTreeClick(this, event, true);"
 			onmousemove="SidebarUtils.handleTreeMouseMove(event);"
-			onmouseout="SidebarUtils.clearURLFromStatusBar();">
+			onmouseout="Bookmarks2PaneService.clearBookmarkLocation();">
 			<treecols>
 				<treecol id="title" flex="1" primary="true" hideheader="true"/>
 			</treecols>

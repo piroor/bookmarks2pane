@@ -236,7 +236,7 @@ var Bookmarks2PaneService = {
 							continue;
 						}
 					]]>.toString().replace('FIX_INDEX', FIX_INDEX)
-				).replace( // Firefox 3.7 or later
+				).replace( // Firefox 4-
 					'if (this._isPlainContainer(aContainer)) {',
 					<![CDATA[$&
 						if (this.selection &&
@@ -341,12 +341,22 @@ var Bookmarks2PaneService = {
 		{
 			var flavours = new FlavourSet();
 			var types = PlacesUIUtils.GENERIC_VIEW_DROP_TYPES || // Firefox 3 - 3.6
-						PlacesControllerDragHelper.GENERIC_VIEW_DROP_TYPES; // Firefox 3.7 or later
+						PlacesControllerDragHelper.GENERIC_VIEW_DROP_TYPES; // Firefox 4-
 			types.forEach(function(aType) {
 				flavours.appendFlavour(aType);
 			});
 			return flavours;
 		}
+	},
+ 
+	clearBookmarkLocation : function()
+	{
+		if (SidebarUtils.clearURLFromStatusBar) // -Firefox 3.6
+			SidebarUtils.clearURLFromStatusBar();
+		else if (SidebarUtils.setMouseoverURL) // Firefox 4-
+			SidebarUtils.setMouseoverURL('');
+		else
+			throw new Error('bookmarks2pane: failed to clear bookmark location.');
 	},
   
 	// compatibility 
