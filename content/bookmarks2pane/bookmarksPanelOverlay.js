@@ -279,10 +279,7 @@ var Bookmarks2PaneService = {
 							(
 								this.selection &&
 								this.selection.tree &&
-								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER &&
-								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY &&
-								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER &&
-								curChildType != Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT
+								Bookmarks2PaneService.isNormalItemType(curChildType)
 							) ?
 								(
 									this.selection.tree.element == Bookmarks2PaneService.mainTree &&
@@ -311,6 +308,56 @@ var Bookmarks2PaneService = {
 				)
 			);
 		}
+
+		// -Firefox 3.5: itemInserted
+		// Firefox 3.6-: nodeInserted
+		let (method = PlacesTreeView.prototype.itemInserted ? 'itemInserted' : 'nodeInserted' ) {
+			eval('PlacesTreeView.prototype.'+method+' = '+
+				PlacesTreeView.prototype[method].toSource().replace(
+					'if (PlacesUtils.nodeIsSeparator(aNode)',
+					<![CDATA[
+						if ((this._tree.element == Bookmarks2PaneService.mainTree) ==
+							Bookmarks2PaneService.isNormalItemType(aNode.type))
+							return;
+					$&]]>.toString()
+				)
+			);
+		}
+
+		// -Firefox 3.5: itemRemoved
+		// Firefox 3.6-: nodeRemoved
+		let (method = PlacesTreeView.prototype.itemRemoved ? 'itemRemoved' : 'nodeRemoved' ) {
+			eval('PlacesTreeView.prototype.'+method+' = '+
+				PlacesTreeView.prototype[method].toSource().replace(
+					// -Firefox 3.6: var oldViewIndex = ...
+					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
+					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
+					<![CDATA[
+						if ((this._tree.element == Bookmarks2PaneService.mainTree) ==
+							Bookmarks2PaneService.isNormalItemType(aNode.type))
+							return;
+					$1]]>.toString()
+				)
+			);
+		}
+
+		// -Firefox 3.5: itemMoved
+		// Firefox 3.6-: nodeMoved
+		let (method = PlacesTreeView.prototype.itemMoved ? 'itemMoved' : 'nodeMoved' ) {
+			eval('PlacesTreeView.prototype.'+method+' = '+
+				PlacesTreeView.prototype[method].toSource().replace(
+					// -Firefox 3.6: var oldViewIndex = ...
+					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
+					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
+					<![CDATA[
+						if ((this._tree.element == Bookmarks2PaneService.mainTree) ==
+							Bookmarks2PaneService.isNormalItemType(aNode.type))
+							return;
+					$1]]>.toString()
+				)
+			);
+		}
+
 		init();
 
 		eval('window.searchBookmarks = '+
@@ -379,6 +426,16 @@ var Bookmarks2PaneService = {
 			this.dustbox.setAttribute('collapsed', true);
 			this.splitter.setAttribute('collapsed', true);
 		}
+	},
+ 
+	isNormalItemType : function(aType)
+	{
+		return !(
+			aType == Ci.nsINavHistoryResultNode.RESULT_TYPE_DYNAMIC_CONTAINER ||
+			aType == Ci.nsINavHistoryResultNode.RESULT_TYPE_QUERY ||
+			aType == Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER ||
+			aType == Ci.nsINavHistoryResultNode.RESULT_TYPE_FOLDER_SHORTCUT
+		);
 	},
  
 	// command 
