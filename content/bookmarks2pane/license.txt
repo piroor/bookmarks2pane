@@ -13,11 +13,11 @@
  *
  * The Original Code is the 2 Pane Bookmarks.
  *
- * The Initial Developer of the Original Code is SHIMODA Hiroshi.
+ * The Initial Developer of the Original Code is YUKI "Piro" Hiroshi.
  * Portions created by the Initial Developer are Copyright (C) 2003-2011
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): SHIMODA Hiroshi <piro.outsider.reflex@gmail.com>
+ * Contributor(s): YUKI "Piro" Hiroshi <piro.outsider.reflex@gmail.com>
  *                 plus7 <ahya365@hotmail.com>
  *
  * Alternatively, the contents of these files may be used under the terms of
