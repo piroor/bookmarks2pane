@@ -274,37 +274,35 @@ var Bookmarks2PaneService = {
 			eval('PlacesTreeView.prototype._buildVisibleSection = '+
 				source.replace(
 					/((?:var|let) curChildType = curChild.type;)/,
-					<![CDATA[$1
-						if (
-							(
-								this.selection &&
-								this.selection.tree &&
-								Bookmarks2PaneService.isNormalItemType(curChildType)
-							) ?
-								(
-									this.selection.tree.element == Bookmarks2PaneService.mainTree &&
-									!Bookmarks2PaneService.doingSearch
-								) :
-								(
-									this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&
-									curChild.parent.folderItemId != aContainer.folderItemId*/
-								)
-							) {
-							FIX_INDEX
-							continue;
-						}
-					]]>.toString().replace('FIX_INDEX', FIX_INDEX)
+					'$1\n' +
+					'  if (\n' +
+					'    (\n' +
+					'      this.selection &&\n' +
+					'      this.selection.tree &&\n' +
+					'      Bookmarks2PaneService.isNormalItemType(curChildType)\n' +
+					'    ) ?\n' +
+					'      (\n' +
+					'        this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
+					'        !Bookmarks2PaneService.doingSearch\n' +
+					'      ) :\n' +
+					'      (\n' +
+					'        this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&\n' +
+					'        curChild.parent.folderItemId != aContainer.folderItemId*/\n' +
+					'      )\n' +
+					'    ) {\n' +
+					'    ' + FIX_INDEX + '\n' +
+					'    continue;\n' +
+					'  }\n'
 				).replace( // Firefox 4-
 					'if (this._isPlainContainer(aContainer)) {',
-					<![CDATA[$&
-						if (this.selection &&
-							this.selection.tree &&
-							this.selection.tree.element == Bookmarks2PaneService.mainTree &&
-							!Bookmarks2PaneService.doingSearch) {
-							this._rows.splice(aFirstChildRow, cc);
-							return 0;
-						}
-					]]>.toString()
+					'$&\n' +
+					'  if (this.selection &&\n' +
+					'    this.selection.tree &&\n' +
+					'    this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
+					'    !Bookmarks2PaneService.doingSearch) {\n' +
+					'    this._rows.splice(aFirstChildRow, cc);\n' +
+					'    return 0;\n' +
+					'  }\n'
 				)
 			);
 		}
@@ -315,11 +313,10 @@ var Bookmarks2PaneService = {
 			eval('PlacesTreeView.prototype.'+method+' = '+
 				PlacesTreeView.prototype[method].toSource().replace(
 					'if (PlacesUtils.nodeIsSeparator(aNode)',
-					<![CDATA[
-						if ((this._tree.element == Bookmarks2PaneService.mainTree) ==
-							Bookmarks2PaneService.isNormalItemType(aNode.type))
-							return;
-					$&]]>.toString()
+					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
+					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
+					'    return;\n' +
+					'$&\n'
 				)
 			);
 		}
@@ -332,11 +329,10 @@ var Bookmarks2PaneService = {
 					// -Firefox 3.6: var oldViewIndex = ...
 					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
 					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
-					<![CDATA[
-						if ((this._tree.element == Bookmarks2PaneService.mainTree) ==
-							Bookmarks2PaneService.isNormalItemType(aNode.type))
-							return;
-					$1]]>.toString()
+					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
+					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
+					'    return;\n' +
+					'$1\n'
 				)
 			);
 		}
@@ -349,11 +345,10 @@ var Bookmarks2PaneService = {
 					// -Firefox 3.6: var oldViewIndex = ...
 					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
 					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
-					<![CDATA[
-						if ((this._tree.element == Bookmarks2PaneService.mainTree) ==
-							Bookmarks2PaneService.isNormalItemType(aNode.type))
-							return;
-					$1]]>.toString()
+					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
+					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
+					'    return;\n' +
+					'$1\n'
 				)
 			);
 		}
@@ -366,9 +361,8 @@ var Bookmarks2PaneService = {
 				'$& Bookmarks2PaneService.doingSearch = aSearchString ? true : false ;'
 			).replace(
 				/(\}\)?)$/,
-				<![CDATA[
-					Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));
-				$1]]>.toString()
+				'  Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));\n' +
+				'$1\n'
 			)
 		);
 
@@ -480,16 +474,14 @@ var Bookmarks2PaneService = {
 		if ('booxBPTooltip' in window)
 			eval('window.booxBPTooltip.fillInTooltip = '+window.booxBPTooltip.fillInTooltip.toSource().replace(
 				'var tree = document.getElementById("bookmarks-view").tree;',
-				<![CDATA[
-					var tree = document.tooltipNode || document.popupNode;
-					while (tree.parentNode && tree.localName != 'bookmarks-tree') {
-						tree = tree.parentNode;
-					}
-					if (!tree)
-						return false;
-					else if (tree.tree)
-						tree = tree.tree;
-				]]>
+				'  var tree = document.tooltipNode || document.popupNode;\n' +
+				'  while (tree.parentNode && tree.localName != "bookmarks-tree") {\n' +
+				'    tree = tree.parentNode;\n' +
+				'  }\n' +
+				'  if (!tree)\n' +
+				'    return false;\n' +
+				'  else if (tree.tree)\n' +
+				'    tree = tree.tree;\n'
 			));
 
 
