@@ -1,12 +1,12 @@
-content	bookmarks2pane	jar:chrome/bookmarks2pane.jar!/content/bookmarks2pane/
+content	bookmarks2pane	content/bookmarks2pane/
 
 overlay	chrome://browser/content/bookmarks/bookmarksPanel.xul	chrome://bookmarks2pane/content/bookmarksPanelOverlay.xul
 overlay	chrome://browser/content/bookmarks/bookmarksPanel.xul	chrome://bookmarks2pane/content/bookmarksPanelTreeOverlay.xul
 
-locale	bookmarks2pane	en-US	jar:chrome/bookmarks2pane.jar!/locale/en-US/bookmarks2pane/
-locale	bookmarks2pane	ja-JP	jar:chrome/bookmarks2pane.jar!/locale/ja-JP/bookmarks2pane/
-locale	bookmarks2pane	sk-SK	jar:chrome/bookmarks2pane.jar!/locale/sk-SK/bookmarks2pane/
-locale	bookmarks2pane	hu-HU	jar:chrome/bookmarks2pane.jar!/locale/hu-HU/bookmarks2pane/
-locale	bookmarks2pane	it-IT	jar:chrome/bookmarks2pane.jar!/locale/it-IT/bookmarks2pane/
+locale	bookmarks2pane	en-US	locale/en-US/bookmarks2pane/
+locale	bookmarks2pane	ja-JP	locale/ja-JP/bookmarks2pane/
+locale	bookmarks2pane	sk-SK	locale/sk-SK/bookmarks2pane/
+locale	bookmarks2pane	hu-HU	locale/hu-HU/bookmarks2pane/
+locale	bookmarks2pane	it-IT	locale/it-IT/bookmarks2pane/
 
 resource bookmarks2pane-modules modules/
