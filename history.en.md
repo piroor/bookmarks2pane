@@ -1,5 +1,8 @@
 # History
 
+ - master/HEAD
+   * Modified: "jar" archive is no longer included.
+   * Fixed: Make codes E4X-free, to work lately versions of Firefox.
  - 0.6.2011011701
    * Works on Minefield 4.0b10pre.
    * Drop support for Firefox 3.0.
