@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.6.2013040601
    * Modified: "jar" archive is no longer included.
    * Fixed: Make codes E4X-free, to work lately versions of Firefox.
  - 0.6.2011011701

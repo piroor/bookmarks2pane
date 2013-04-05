@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="{FD61379B-066A-4afc-89DE-89FB24D907C2}"
                    em:name="2 Pane Bookmarks"
-                   em:version="0.6.2011011701"
+                   em:version="0.6.2013040601"
                    em:creator="YUKI &quot;Piro&quot; Hiroshi"
                    em:description="shows the Bookmarks sidebar panel with 2 pane style like 0pera."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/bookmarks2pane/"
@@ -67,7 +67,7 @@
       <!-- Firefox -->
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="3.5"
-                       em:maxVersion="4.0b10pre" />
+                       em:maxVersion="23.0a1" />
     </em:targetApplication>
   </RDF:Description>
 </RDF:RDF>
