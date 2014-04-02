@@ -55,9 +55,13 @@ var Bookmarks2PaneService = {
 			case 'select':
 				var tree = aEvent.currentTarget;
 				this.currentTree = tree;
-				var event = document.createEvent('DataContainerEvent');
-				event.initEvent('Bookmarks2PaneOnFolderSelect', false, false);
-				event.setData('targetQuery', 'selection');
+				var event = new CustomEvent('Bookmarks2PaneOnFolderSelect', {
+					bubbles    : false,
+					cancelable : false,
+					detail     : {
+						targetQuery : 'selection'
+					}
+				});
 				tree.dispatchEvent(event);
 				break;
 
@@ -163,7 +167,7 @@ var Bookmarks2PaneService = {
 	onTargetChange : function(aEvent) 
 	{
 		var tree = aEvent.currentTarget;
-		var query = aEvent.getData('targetQuery');
+		var query = aEvent.detail.targetQuery;
 		if (query == 'selection') {
 			if (tree.selectedNode) {
 				switch (tree.selectedNode.type)
@@ -383,11 +387,9 @@ var Bookmarks2PaneService = {
  
 	createSearchEvent : function(aInput) 
 	{
-		var event = document.createEvent('DataContainerEvent');
-		event.initEvent('Bookmarks2PaneOnFolderSelect', false, false);
-
+		var detail = {};
 		if (!aInput) {
-			event.setData('targetQuery', null);
+			detail.targetQuery = null;
 		}
 		else {
 			var match = 'Name';
@@ -402,9 +404,14 @@ var Bookmarks2PaneService = {
 						break;
 				}
 			}
-			event.setData('targetQuery', 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput));
+			detail.targetQuery = 'find:datasource=rdf:bookmarks&match=http://home.netscape.com/NC-rdf#'+match+'&method=contains&text=' + escape(aInput);
 		}
 
+		var event = new CustomEvent('Bookmarks2PaneOnFolderSelect', {
+			bubbles    : false,
+			cancelable : false,
+			detail     : detail
+		});
 		return event;
 	},
   
@@ -457,16 +464,16 @@ var Bookmarks2PaneService = {
 		if ('BddsearchBookmarks' in window)
 			eval('window.BddsearchBookmarks = '+window.BddsearchBookmarks.toSource().replace(
 				/(if\s*\(!aInput\))/,
-				'var event = document.createEvent("DataContainerEvent"); event.initEvent("Bookmarks2PaneOnFolderSelect", false, true); $1'
+				'var Bookmarks2PaneOnFolderSelectEventDetail = {}; $1'
 			).replace(
 				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],\s*bookmarkView\.originalRef\s*\)/,
-				'event.setData("targetQuery", null)'
+				'Bookmarks2PaneOnFolderSelectEventDetail.targetQuery = null'
 			).replace(
 				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],(.+)\)/g,
-				'event.setData("targetQuery", $1)'
+				'Bookmarks2PaneOnFolderSelectEventDetail.targetQuery = $1'
 			).replace(
 				/\}(\)?)$/,
-				'; Bookmarks2PaneService.mainTree.dispatchEvent(event);}$1'
+				'; var event = new CustomEvent("Bookmarks2PaneOnFolderSelect", { bubbles : false, cancelable : true, detail : Bookmarks2PaneOnFolderSelectEventDetail }); Bookmarks2PaneService.mainTree.dispatchEvent(event);}$1'
 			));
 
 
