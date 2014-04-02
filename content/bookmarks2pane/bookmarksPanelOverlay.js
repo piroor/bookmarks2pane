@@ -2,7 +2,7 @@ var Bookmarks2PaneService = {
 	
 	get shouldOpenOnlyOneTree() 
 	{
-		return this.getPref('bookmarks2pane.open_only_one_tree');
+		return this.prefs.getPref('bookmarks2pane.open_only_one_tree');
 	},
  
 	doingSearch : false, 
@@ -182,8 +182,8 @@ var Bookmarks2PaneService = {
 						return;
 				}
 				this.contentLabel.value = tree.selectedNode.title;
-				this.setPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
-				this.setPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
+				this.prefs.setPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
+				this.prefs.setPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
 				window.setTimeout(function(aSelf) {
 					aSelf.onTargetChangeCallback();
 				}, 0, this);
@@ -366,13 +366,13 @@ var Bookmarks2PaneService = {
 			)
 		);
 
-		var lastPlace = this.getPref('bookmarks2pane.last_selected_folder') || '';
+		var lastPlace = this.prefs.getPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
 			var bmsv = Components
 					.classes['@mozilla.org/browser/nav-bookmarks-service;1']
 					.getService(Components.interfaces.nsINavBookmarksService);
 			try {
-				var title = bmsv.getItemTitle(this.getPref('bookmarks2pane.last_selected_folder_id'));
+				var title = bmsv.getItemTitle(this.prefs.getPref('bookmarks2pane.last_selected_folder_id'));
 				this.contentLabel.value = title;
 			}
 			catch(e) {
@@ -509,7 +509,7 @@ var Bookmarks2PaneService = {
 (function() {
 	var namespace = {};
 	Components.utils.import('resource://bookmarks2pane-modules/prefs.js', namespace);
-	Bookmarks2PaneService.__proto__ = namespace.prefs;
+	Bookmarks2PaneService.prefs = namespace.prefs;
 
 	var root = document.getElementById('bookmarksPanel');
 	if (namespace.prefs.getPref('bookmarks2pane.enabled')) {
