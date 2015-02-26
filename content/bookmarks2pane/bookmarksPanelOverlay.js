@@ -270,7 +270,8 @@ var Bookmarks2PaneService = {
 	
 	initPlaces : function() 
 	{
-		let (source = PlacesTreeView.prototype._buildVisibleSection.toSource()) {
+		{
+			let source = PlacesTreeView.prototype._buildVisibleSection.toSource();
 			let match = source.match(/(curChild._?viewIndex = -1;)/);
 			let FIX_INDEX = match ?
 					match[1] : // Firefox 3.0 - 3.6
@@ -313,7 +314,8 @@ var Bookmarks2PaneService = {
 
 		// -Firefox 3.5: itemInserted
 		// Firefox 3.6-: nodeInserted
-		let (method = PlacesTreeView.prototype.itemInserted ? 'itemInserted' : 'nodeInserted' ) {
+		{
+			let method = PlacesTreeView.prototype.itemInserted ? 'itemInserted' : 'nodeInserted' ;
 			eval('PlacesTreeView.prototype.'+method+' = '+
 				PlacesTreeView.prototype[method].toSource().replace(
 					'if (PlacesUtils.nodeIsSeparator(aNode)',
@@ -327,7 +329,8 @@ var Bookmarks2PaneService = {
 
 		// -Firefox 3.5: itemRemoved
 		// Firefox 3.6-: nodeRemoved
-		let (method = PlacesTreeView.prototype.itemRemoved ? 'itemRemoved' : 'nodeRemoved' ) {
+		{
+			let method = PlacesTreeView.prototype.itemRemoved ? 'itemRemoved' : 'nodeRemoved' ;
 			eval('PlacesTreeView.prototype.'+method+' = '+
 				PlacesTreeView.prototype[method].toSource().replace(
 					// -Firefox 3.6: var oldViewIndex = ...
@@ -343,7 +346,8 @@ var Bookmarks2PaneService = {
 
 		// -Firefox 3.5: itemMoved
 		// Firefox 3.6-: nodeMoved
-		let (method = PlacesTreeView.prototype.itemMoved ? 'itemMoved' : 'nodeMoved' ) {
+		{
+			let method = PlacesTreeView.prototype.itemMoved ? 'itemMoved' : 'nodeMoved' ;
 			eval('PlacesTreeView.prototype.'+method+' = '+
 				PlacesTreeView.prototype[method].toSource().replace(
 					// -Firefox 3.6: var oldViewIndex = ...
