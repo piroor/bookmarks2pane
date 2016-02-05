@@ -270,74 +270,74 @@ var Bookmarks2PaneService = {
 	
 	initPlaces : function() 
 	{
-			eval('PlacesTreeView.prototype._buildVisibleSection = '+
-				PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
-					/(let curChildType = curChild.type;)/,
-					'$1\n' +
-					'  if (\n' +
-					'    (\n' +
-					'      this.selection &&\n' +
-					'      this.selection.tree &&\n' +
-					'      Bookmarks2PaneService.isNormalItemType(curChildType)\n' +
-					'    ) ?\n' +
-					'      (\n' +
-					'        this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
-					'        !Bookmarks2PaneService.doingSearch\n' +
-					'      ) :\n' +
-					'      (\n' +
-					'        this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&\n' +
-					'        curChild.parent.folderItemId != aContainer.folderItemId*/\n' +
-					'      )\n' +
-					'    ) {\n' +
-					'    this._rows.splice(aFirstChildRow + rowsInserted, 1);\n' +
-					'    continue;\n' +
-					'  }\n'
-				).replace(
-					'if (this._isPlainContainer(aContainer))',
-					'$& {\n' +
-					'  if (this.selection &&\n' +
-					'    this.selection.tree &&\n' +
-					'    this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
-					'    !Bookmarks2PaneService.doingSearch) {\n' +
-					'    this._rows.splice(aFirstChildRow, cc);\n' +
-					'    return 0;\n' +
-					'  }\n' +
-					'}\n' +
-					'$&\n'
-				)
-			);
+		eval('PlacesTreeView.prototype._buildVisibleSection = '+
+			PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
+				/(let curChildType = curChild.type;)/,
+				'$1\n' +
+				'  if (\n' +
+				'    (\n' +
+				'      this.selection &&\n' +
+				'      this.selection.tree &&\n' +
+				'      Bookmarks2PaneService.isNormalItemType(curChildType)\n' +
+				'    ) ?\n' +
+				'      (\n' +
+				'        this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
+				'        !Bookmarks2PaneService.doingSearch\n' +
+				'      ) :\n' +
+				'      (\n' +
+				'        this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&\n' +
+				'        curChild.parent.folderItemId != aContainer.folderItemId*/\n' +
+				'      )\n' +
+				'    ) {\n' +
+				'    this._rows.splice(aFirstChildRow + rowsInserted, 1);\n' +
+				'    continue;\n' +
+				'  }\n'
+			).replace(
+				'if (this._isPlainContainer(aContainer))',
+				'$& {\n' +
+				'  if (this.selection &&\n' +
+				'    this.selection.tree &&\n' +
+				'    this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
+				'    !Bookmarks2PaneService.doingSearch) {\n' +
+				'    this._rows.splice(aFirstChildRow, cc);\n' +
+				'    return 0;\n' +
+				'  }\n' +
+				'}\n' +
+				'$&\n'
+			)
+		);
 
-			eval('PlacesTreeView.prototype.nodeInserted = '+
-				PlacesTreeView.prototype.nodeInserted.toSource().replace(
-					'if (PlacesUtils.nodeIsSeparator(aNode)',
-					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
-					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
-					'    return;\n' +
-					'$&\n'
-				)
-			);
+		eval('PlacesTreeView.prototype.nodeInserted = '+
+			PlacesTreeView.prototype.nodeInserted.toSource().replace(
+				'if (PlacesUtils.nodeIsSeparator(aNode)',
+				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
+				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
+				'    return;\n' +
+				'$&\n'
+			)
+		);
 
-			eval('PlacesTreeView.prototype.nodeRemoved = '+
-				PlacesTreeView.prototype.nodeRemoved.toSource().replace(
-					// -Firefox 3.6: var oldViewIndex = ...
-					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
-					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
-					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
-					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
-					'    return;\n' +
-					'$1\n'
-				)
-			);
+		eval('PlacesTreeView.prototype.nodeRemoved = '+
+			PlacesTreeView.prototype.nodeRemoved.toSource().replace(
+				// -Firefox 3.6: var oldViewIndex = ...
+				// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
+				/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
+				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
+				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
+				'    return;\n' +
+				'$1\n'
+			)
+		);
 
-			eval('PlacesTreeView.prototype.nodeMoved = '+
-				PlacesTreeView.prototype.nodeMoved.toSource().replace(
-					/(if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
-					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
-					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
-					'    return;\n' +
-					'$1\n'
-				)
-			);
+		eval('PlacesTreeView.prototype.nodeMoved = '+
+			PlacesTreeView.prototype.nodeMoved.toSource().replace(
+				/(if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
+				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
+				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
+				'    return;\n' +
+				'$1\n'
+			)
+		);
 
 		init();
 
