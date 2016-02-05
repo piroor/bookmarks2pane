@@ -307,35 +307,41 @@ var Bookmarks2PaneService = {
 			)
 		);
 
-		eval('PlacesTreeView.prototype.nodeInserted = '+
-			PlacesTreeView.prototype.nodeInserted.toSource().replace(
-				'if (PlacesUtils.nodeIsSeparator(aNode)',
-				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
-				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
-				'    return;\n' +
-				'$&\n'
-			)
-		);
+		PlacesTreeView.prototype.__bookkmarks2pane__nodeInserted = PlacesTreeView.prototype.nodeInserted;
+		PlacesTreeView.prototype.nodeInserted = function(aParentNode, aNode, ...aArgs) {
+			var isMainTree = (
+				this._tree &&
+				this._tree.element == Bookmarks2PaneService.mainTree
+			);
+			if (isMainTree == Bookmarks2PaneService.isNormalItemType(aNode.type))
+				return;
 
-		eval('PlacesTreeView.prototype.nodeRemoved = '+
-			PlacesTreeView.prototype.nodeRemoved.toSource().replace(
-				/(if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
-				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
-				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
-				'    return;\n' +
-				'$1\n'
-			)
-		);
+			return PlacesTreeView.prototype.__bookkmarks2pane__nodeInserted.apply(this, [aParentNode, aNode].concat(aArgs));
+		};
 
-		eval('PlacesTreeView.prototype.nodeMoved = '+
-			PlacesTreeView.prototype.nodeMoved.toSource().replace(
-				/(if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
-				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
-				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
-				'    return;\n' +
-				'$1\n'
-			)
-		);
+		PlacesTreeView.prototype.__bookkmarks2pane__nodeRemoved = PlacesTreeView.prototype.nodeRemoved;
+		PlacesTreeView.prototype.nodeRemoved = function(aParentNode, aNode, ...aArgs) {
+			var isMainTree = (
+				this._tree &&
+				this._tree.element == Bookmarks2PaneService.mainTree
+			);
+			if (isMainTree == Bookmarks2PaneService.isNormalItemType(aNode.type))
+				return;
+
+			return PlacesTreeView.prototype.__bookkmarks2pane__nodeRemoved.apply(this, [aParentNode, aNode].concat(aArgs));
+		};
+
+		PlacesTreeView.prototype.__bookkmarks2pane__nodeMoved = PlacesTreeView.prototype.nodeMoved;
+		PlacesTreeView.prototype.nodeMoved = function(aNode, ...aArgs) {
+			var isMainTree = (
+				this._tree &&
+				this._tree.element == Bookmarks2PaneService.mainTree
+			);
+			if (isMainTree == Bookmarks2PaneService.isNormalItemType(aNode.type))
+				return;
+
+			return PlacesTreeView.prototype.__bookkmarks2pane__nodeMoved.apply(this, [aNode].concat(aArgs));
+		};
 
 		init();
 
