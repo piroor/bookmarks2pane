@@ -278,12 +278,12 @@ var Bookmarks2PaneService = {
 				this.selection.tree
 			);
 			var isMainTree = handlable && this.selection.tree.element == Bookmarks2PaneService.mainTree;
-			if (isMainTree && Bookmarks2PaneService.doingSearch)
+			if (!isMainTree && Bookmarks2PaneService.doingSearch)
 				return 0;
 
 			var totalCount = PlacesTreeView.prototype.__bookmarks2pane__buildVisibleSection.apply(this, [aContainer, aFirstChildRow, aToOpen].concat(aArgs));
 
-			if (handlable) {
+			if (handlable && !Bookmarks2PaneService.doingSearch) {
 				for (let i = aContainer.childCount - 1; i > -1; i--)
 				{
 					let child = aContainer.getChild(i);
