@@ -270,15 +270,9 @@ var Bookmarks2PaneService = {
 	
 	initPlaces : function() 
 	{
-		{
-			let source = PlacesTreeView.prototype._buildVisibleSection.toSource();
-			let match = source.match(/(curChild._?viewIndex = -1;)/);
-			let FIX_INDEX = match ?
-					match[1] : // Firefox 3.0 - 3.6
-					'this._rows.splice(aFirstChildRow + rowsInserted, 1);' ; // Firefox 4-
 			eval('PlacesTreeView.prototype._buildVisibleSection = '+
-				source.replace(
-					/((?:var|let) curChildType = curChild.type;)/,
+				PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
+					/(let curChildType = curChild.type;)/,
 					'$1\n' +
 					'  if (\n' +
 					'    (\n' +
@@ -295,29 +289,26 @@ var Bookmarks2PaneService = {
 					'        curChild.parent.folderItemId != aContainer.folderItemId*/\n' +
 					'      )\n' +
 					'    ) {\n' +
-					'    ' + FIX_INDEX + '\n' +
+					'    this._rows.splice(aFirstChildRow + rowsInserted, 1);\n' +
 					'    continue;\n' +
 					'  }\n'
-				).replace( // Firefox 4-
-					'if (this._isPlainContainer(aContainer)) {',
-					'$&\n' +
+				).replace(
+					'if (this._isPlainContainer(aContainer))',
+					'$& {\n' +
 					'  if (this.selection &&\n' +
 					'    this.selection.tree &&\n' +
 					'    this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
 					'    !Bookmarks2PaneService.doingSearch) {\n' +
 					'    this._rows.splice(aFirstChildRow, cc);\n' +
 					'    return 0;\n' +
-					'  }\n'
+					'  }\n' +
+					'}\n' +
+					'$&\n'
 				)
 			);
-		}
 
-		// -Firefox 3.5: itemInserted
-		// Firefox 3.6-: nodeInserted
-		{
-			let method = PlacesTreeView.prototype.itemInserted ? 'itemInserted' : 'nodeInserted' ;
-			eval('PlacesTreeView.prototype.'+method+' = '+
-				PlacesTreeView.prototype[method].toSource().replace(
+			eval('PlacesTreeView.prototype.nodeInserted = '+
+				PlacesTreeView.prototype.nodeInserted.toSource().replace(
 					'if (PlacesUtils.nodeIsSeparator(aNode)',
 					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
 					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
@@ -325,14 +316,9 @@ var Bookmarks2PaneService = {
 					'$&\n'
 				)
 			);
-		}
 
-		// -Firefox 3.5: itemRemoved
-		// Firefox 3.6-: nodeRemoved
-		{
-			let method = PlacesTreeView.prototype.itemRemoved ? 'itemRemoved' : 'nodeRemoved' ;
-			eval('PlacesTreeView.prototype.'+method+' = '+
-				PlacesTreeView.prototype[method].toSource().replace(
+			eval('PlacesTreeView.prototype.nodeRemoved = '+
+				PlacesTreeView.prototype.nodeRemoved.toSource().replace(
 					// -Firefox 3.6: var oldViewIndex = ...
 					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
 					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
@@ -342,24 +328,16 @@ var Bookmarks2PaneService = {
 					'$1\n'
 				)
 			);
-		}
 
-		// -Firefox 3.5: itemMoved
-		// Firefox 3.6-: nodeMoved
-		{
-			let method = PlacesTreeView.prototype.itemMoved ? 'itemMoved' : 'nodeMoved' ;
-			eval('PlacesTreeView.prototype.'+method+' = '+
-				PlacesTreeView.prototype[method].toSource().replace(
-					// -Firefox 3.6: var oldViewIndex = ...
-					// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
-					/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
+			eval('PlacesTreeView.prototype.nodeMoved = '+
+				PlacesTreeView.prototype.nodeMoved.toSource().replace(
+					/(if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
 					'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
 					'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
 					'    return;\n' +
 					'$1\n'
 				)
 			);
-		}
 
 		init();
 
