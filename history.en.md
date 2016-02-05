@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 1.0.2016020601
+   * Works on Nightly 47.0a1.
+   * Drop support for Firefox 37 and older.
  - 0.6.2013040601
    * Modified: "jar" archive is no longer included.
    * Fixed: Make codes E4X-free, to work lately versions of Firefox.
