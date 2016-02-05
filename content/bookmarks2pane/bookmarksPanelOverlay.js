@@ -270,42 +270,32 @@ var Bookmarks2PaneService = {
 	
 	initPlaces : function() 
 	{
-		eval('PlacesTreeView.prototype._buildVisibleSection = '+
-			PlacesTreeView.prototype._buildVisibleSection.toSource().replace(
-				/(let curChildType = curChild.type;)/,
-				'$1\n' +
-				'  if (\n' +
-				'    (\n' +
-				'      this.selection &&\n' +
-				'      this.selection.tree &&\n' +
-				'      Bookmarks2PaneService.isNormalItemType(curChildType)\n' +
-				'    ) ?\n' +
-				'      (\n' +
-				'        this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
-				'        !Bookmarks2PaneService.doingSearch\n' +
-				'      ) :\n' +
-				'      (\n' +
-				'        this.selection.tree.element == Bookmarks2PaneService.contentTree/* &&\n' +
-				'        curChild.parent.folderItemId != aContainer.folderItemId*/\n' +
-				'      )\n' +
-				'    ) {\n' +
-				'    this._rows.splice(aFirstChildRow + rowsInserted, 1);\n' +
-				'    continue;\n' +
-				'  }\n'
-			).replace(
-				'if (this._isPlainContainer(aContainer))',
-				'$& {\n' +
-				'  if (this.selection &&\n' +
-				'    this.selection.tree &&\n' +
-				'    this.selection.tree.element == Bookmarks2PaneService.mainTree &&\n' +
-				'    !Bookmarks2PaneService.doingSearch) {\n' +
-				'    this._rows.splice(aFirstChildRow, cc);\n' +
-				'    return 0;\n' +
-				'  }\n' +
-				'}\n' +
-				'$&\n'
-			)
-		);
+		PlacesTreeView.prototype.__bookmarks2pane__buildVisibleSection = PlacesTreeView.prototype._buildVisibleSection;
+		PlacesTreeView.prototype._buildVisibleSection = function(aContainer, aFirstChildRow, aToOpen, ...aArgs) {
+			var handlable = (
+				aContainer.containerOpen &&
+				this.selection &&
+				this.selection.tree
+			);
+			var isMainTree = handlable && this.selection.tree.element == Bookmarks2PaneService.mainTree;
+			if (isMainTree && Bookmarks2PaneService.doingSearch)
+				return 0;
+
+			var totalCount = PlacesTreeView.prototype.__bookmarks2pane__buildVisibleSection.apply(this, [aContainer, aFirstChildRow, aToOpen].concat(aArgs));
+
+			if (handlable) {
+				for (let i = aContainer.childCount - 1; i > -1; i--)
+				{
+					let child = aContainer.getChild(i);
+					if (isMainTree == Bookmarks2PaneService.isNormalItemType(child.type)) {
+						this._rows.splice(aFirstChildRow + i, 1);
+						totalCount--;
+					}
+				}
+			}
+
+			return totalCount;
+		};
 
 		PlacesTreeView.prototype.__bookmarks2pane__nodeInserted = PlacesTreeView.prototype.nodeInserted;
 		PlacesTreeView.prototype.nodeInserted = function(aParentNode, aNode, ...aArgs) {
