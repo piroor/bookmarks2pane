@@ -431,9 +431,7 @@ var Bookmarks2PaneService = {
  
 	clearBookmarkLocation : function()
 	{
-		if (SidebarUtils.clearURLFromStatusBar) // -Firefox 3.6
-			SidebarUtils.clearURLFromStatusBar();
-		else if (SidebarUtils.setMouseoverURL) // Firefox 4-
+		if (SidebarUtils.setMouseoverURL)
 			SidebarUtils.setMouseoverURL('');
 		else
 			throw new Error('bookmarks2pane: failed to clear bookmark location.');
