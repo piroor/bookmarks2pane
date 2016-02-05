@@ -341,16 +341,13 @@ var Bookmarks2PaneService = {
 
 		init();
 
-		eval('window.searchBookmarks = '+
-			window.searchBookmarks.toSource().replace(
-				'{',
-				'$& Bookmarks2PaneService.doingSearch = aSearchString ? true : false ;'
-			).replace(
-				/(\}\)?)$/,
-				'  Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));\n' +
-				'$1\n'
-			)
-		);
+		window.__bookmarks2pane__searchBookmarks = window.searchBookmarks;
+		window.searchBookmarks = function(aSearchString, ...aArgs) {
+			Bookmarks2PaneService.doingSearch = aSearchString ? true : false ;
+			var retVal = window.__bookmarks2pane__searchBookmarks.apply(this, [aSearchString].concat(aArgs));
+			Bookmarks2PaneService.mainTree.dispatchEvent(Bookmarks2PaneService.createSearchEvent(aSearchString));
+			return retVal;
+		};
 
 		var lastPlace = this.prefs.getPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
