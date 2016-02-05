@@ -319,9 +319,7 @@ var Bookmarks2PaneService = {
 
 		eval('PlacesTreeView.prototype.nodeRemoved = '+
 			PlacesTreeView.prototype.nodeRemoved.toSource().replace(
-				// -Firefox 3.6: var oldViewIndex = ...
-				// Firefox 4-: if (PlacesUtils.nodeIsSeparator(aNode) ...
-				/(var oldViewIndex = |if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
+				/(if \(PlacesUtils.nodeIsSeparator\(aNode\))/,
 				'  if ((this._tree.element == Bookmarks2PaneService.mainTree) ==\n' +
 				'    Bookmarks2PaneService.isNormalItemType(aNode.type))\n' +
 				'    return;\n' +
