@@ -307,7 +307,7 @@ var Bookmarks2PaneService = {
 			)
 		);
 
-		PlacesTreeView.prototype.__bookkmarks2pane__nodeInserted = PlacesTreeView.prototype.nodeInserted;
+		PlacesTreeView.prototype.__bookmarks2pane__nodeInserted = PlacesTreeView.prototype.nodeInserted;
 		PlacesTreeView.prototype.nodeInserted = function(aParentNode, aNode, ...aArgs) {
 			var isMainTree = (
 				this._tree &&
@@ -316,10 +316,10 @@ var Bookmarks2PaneService = {
 			if (isMainTree == Bookmarks2PaneService.isNormalItemType(aNode.type))
 				return;
 
-			return PlacesTreeView.prototype.__bookkmarks2pane__nodeInserted.apply(this, [aParentNode, aNode].concat(aArgs));
+			return PlacesTreeView.prototype.__bookmarks2pane__nodeInserted.apply(this, [aParentNode, aNode].concat(aArgs));
 		};
 
-		PlacesTreeView.prototype.__bookkmarks2pane__nodeRemoved = PlacesTreeView.prototype.nodeRemoved;
+		PlacesTreeView.prototype.__bookmarks2pane__nodeRemoved = PlacesTreeView.prototype.nodeRemoved;
 		PlacesTreeView.prototype.nodeRemoved = function(aParentNode, aNode, ...aArgs) {
 			var isMainTree = (
 				this._tree &&
@@ -328,10 +328,10 @@ var Bookmarks2PaneService = {
 			if (isMainTree == Bookmarks2PaneService.isNormalItemType(aNode.type))
 				return;
 
-			return PlacesTreeView.prototype.__bookkmarks2pane__nodeRemoved.apply(this, [aParentNode, aNode].concat(aArgs));
+			return PlacesTreeView.prototype.__bookmarks2pane__nodeRemoved.apply(this, [aParentNode, aNode].concat(aArgs));
 		};
 
-		PlacesTreeView.prototype.__bookkmarks2pane__nodeMoved = PlacesTreeView.prototype.nodeMoved;
+		PlacesTreeView.prototype.__bookmarks2pane__nodeMoved = PlacesTreeView.prototype.nodeMoved;
 		PlacesTreeView.prototype.nodeMoved = function(aNode, ...aArgs) {
 			var isMainTree = (
 				this._tree &&
@@ -340,7 +340,7 @@ var Bookmarks2PaneService = {
 			if (isMainTree == Bookmarks2PaneService.isNormalItemType(aNode.type))
 				return;
 
-			return PlacesTreeView.prototype.__bookkmarks2pane__nodeMoved.apply(this, [aNode].concat(aArgs));
+			return PlacesTreeView.prototype.__bookmarks2pane__nodeMoved.apply(this, [aNode].concat(aArgs));
 		};
 
 		init();
