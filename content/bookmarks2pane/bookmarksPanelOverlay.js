@@ -351,11 +351,11 @@ var Bookmarks2PaneService = {
 
 		var lastPlace = this.prefs.getPref('bookmarks2pane.last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
-			var bmsv = Components
+			let bmsv = Components
 					.classes['@mozilla.org/browser/nav-bookmarks-service;1']
 					.getService(Components.interfaces.nsINavBookmarksService);
 			try {
-				var title = bmsv.getItemTitle(this.prefs.getPref('bookmarks2pane.last_selected_folder_id'));
+				let title = bmsv.getItemTitle(this.prefs.getPref('bookmarks2pane.last_selected_folder_id'));
 				this.contentLabel.value = title;
 			}
 			catch(e) {
@@ -371,7 +371,7 @@ var Bookmarks2PaneService = {
 			detail.targetQuery = null;
 		}
 		else {
-			var match = 'Name';
+			let match = 'Name';
 			if ('gBooxSearchIn' in window) { // hack for Boox
 				switch (gBooxSearchIn)
 				{
