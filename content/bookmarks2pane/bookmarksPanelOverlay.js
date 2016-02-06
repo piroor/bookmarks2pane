@@ -1,15 +1,47 @@
 var Bookmarks2PaneService = { 
 	PREF_VERSION : 1,
+	DOMAIN : 'extensions.{FD61379B-066A-4afc-89DE-89FB24D907C2}.bookmarks2pane.',
+	migratePrefs : function()
+	{
+		var currentVersion = this.prefs.getPref(this.DOMAIN + 'prefVersion');
+
+		switch (currentVersion)
+		{
+			default:
+			case 0:
+				this.prefs.clearPref('bookmarks2pane.enabled');
+
+				[
+					'open_only_one_tree',
+					'last_selected_folder_id',
+					'last_selected_folder'
+				].forEach(function(aSubKey) {
+					let value = this.prefs.getPref('bookmarks2pane.' + aSubKey);
+					if (value === null)
+						return;
+					this.prefs.setPref(this.DOMAIN + aSubKey, value);
+					this.prefs.clearPref('bookmarks2pane.' + aSubKey);
+				}, this);
+
+			case 1:
+				break;
+		}
+
+		if (currentVersion != this.PREF_VERSION)
+			this.prefs.setPref(this.DOMAIN + 'prefVersion', this.PREF_VERSION);
+	},
 	
 	get shouldOpenOnlyOneTree() 
 	{
-		return this.prefs.getPref('bookmarks2pane.open_only_one_tree');
+		return this.prefs.getPref(this.DOMAIN + 'open_only_one_tree');
 	},
  
 	doingSearch : false, 
  
 	init : function() 
 	{
+		this.migratePrefs();
+
 		window.removeEventListener('load', this, false);
 		window.addEventListener('unload', this, false);
 
@@ -187,8 +219,8 @@ var Bookmarks2PaneService = {
 						return;
 				}
 				this.contentLabel.value = tree.selectedNode.title;
-				this.prefs.setPref('bookmarks2pane.last_selected_folder', this.contentTree.place);
-				this.prefs.setPref('bookmarks2pane.last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
+				this.prefs.setPref(this.DOMAIN + 'last_selected_folder', this.contentTree.place);
+				this.prefs.setPref(this.DOMAIN + 'last_selected_folder_id', this.mainTree.selectedNode.folderItemId || this.mainTree.selectedNode.itemId);
 				window.setTimeout(function(aSelf) {
 					aSelf.onTargetChangeCallback();
 				}, 0, this);
@@ -344,13 +376,13 @@ var Bookmarks2PaneService = {
 			return retVal;
 		};
 
-		var lastPlace = this.prefs.getPref('bookmarks2pane.last_selected_folder') || '';
+		var lastPlace = this.prefs.getPref(this.DOMAIN + 'last_selected_folder') || '';
 		if (lastPlace.indexOf('place:') == 0) {
 			let bmsv = Components
 					.classes['@mozilla.org/browser/nav-bookmarks-service;1']
 					.getService(Components.interfaces.nsINavBookmarksService);
 			try {
-				let title = bmsv.getItemTitle(this.prefs.getPref('bookmarks2pane.last_selected_folder_id'));
+				let title = bmsv.getItemTitle(this.prefs.getPref(this.DOMAIN + 'last_selected_folder_id'));
 				this.contentLabel.value = title;
 			}
 			catch(e) {
