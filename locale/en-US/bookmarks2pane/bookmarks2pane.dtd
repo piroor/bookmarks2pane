@@ -7,8 +7,6 @@
 
 <!ENTITY bookmarks2pane.pref.appearance "Appearance">
 
-<!ENTITY bookmarks2pane.pref.enabled "Show bookmarks tree in 2 panes">
-
 <!ENTITY bookmarks2pane.pref.mode    "Behavior of bookmarks tree">
 <!ENTITY bookmarks2pane.pref.mode.normal "Expand sub-trees normally">
 <!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "Collapse other branches automatically when a sub-tree is expanded">

@@ -7,8 +7,6 @@
 
 <!ENTITY bookmarks2pane.pref.appearance "表示">
 
-<!ENTITY bookmarks2pane.pref.enabled "ブックマークツリーを2ペイン表示する">
-
 <!ENTITY bookmarks2pane.pref.mode    "ツリービューの挙動">
 <!ENTITY bookmarks2pane.pref.mode.normal "サブツリーを自由に開いていく（通常）">
 <!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "サブツリーを一つ開いたら他のサブツリーをすべてたたむ">

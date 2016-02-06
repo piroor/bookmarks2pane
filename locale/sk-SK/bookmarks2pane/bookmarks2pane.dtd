@@ -7,8 +7,6 @@
 
 <!ENTITY bookmarks2pane.pref.appearance "Vzhľad">
 
-<!ENTITY bookmarks2pane.pref.enabled "Zobraziť strom záložiek v dvoch paneloch">
-
 <!ENTITY bookmarks2pane.pref.mode    "Správanie sa stromu záložiek">
 <!ENTITY bookmarks2pane.pref.mode.normal "Rozložiť podvetvy normálne">
 <!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "Zlúčiť ostatné vetvy automaticky, ak je podvetva rozložená?">

@@ -2,7 +2,6 @@
 <!ENTITY bookmarks2pane.pref.title "2 Pane Bookmarks - beállítások">
 <!ENTITY bookmarks2pane.pref.tab.general "Általános">
 <!ENTITY bookmarks2pane.pref.appearance "Kinézet">
-<!ENTITY bookmarks2pane.pref.enabled "Könyvjelzők megjelenítése két ablakban">
 <!ENTITY bookmarks2pane.pref.mode "Könyvjelzők mappáinak megnyitásakor">
 <!ENTITY bookmarks2pane.pref.mode.normal "Az összes megnyitott mappa megtartása">
 <!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "A többi mappa automatikus összecsukása">

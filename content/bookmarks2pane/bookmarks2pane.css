@@ -1,11 +1,5 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#bookmarksPanel:not([panesCount="2"]) .bookmarks-parts-for-2panes
-{
-	display: none;
-}
-
 #bookmarks-dustbox:-moz-drag-over {
 	outline: 1px solid;
 }
-

@@ -1,4 +1,5 @@
 var Bookmarks2PaneService = { 
+	PREF_VERSION : 1,
 	
 	get shouldOpenOnlyOneTree() 
 	{
@@ -438,14 +439,6 @@ var Bookmarks2PaneService = {
 	var namespace = {};
 	Components.utils.import('resource://bookmarks2pane-modules/prefs.js', namespace);
 	Bookmarks2PaneService.prefs = namespace.prefs;
-
-	var root = document.getElementById('bookmarksPanel');
-	if (namespace.prefs.getPref('bookmarks2pane.enabled')) {
-		root.setAttribute('panesCount', '2');
-	}
-	else {
-		root.removeAttribute('panesCount');
-	}
 })();
 
 window.addEventListener('load', Bookmarks2PaneService, false);

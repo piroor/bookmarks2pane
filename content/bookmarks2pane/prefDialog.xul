@@ -14,17 +14,10 @@
 
 <prefpane id="prefpane-general" label="&bookmarks2pane.pref.tab.general;">
 	<preferences>
-		<preference id="bookmarks2pane.enabled"
-			name="bookmarks2pane.enabled"
-			type="bool"/>
 		<preference id="bookmarks2pane.open_only_one_tree"
 			name="bookmarks2pane.open_only_one_tree"
 			type="bool"/>
 	</preferences>
-
-	<checkbox label="&bookmarks2pane.pref.enabled;"
-		id="bookmarks2pane.enabled-check"
-		preference="bookmarks2pane.enabled"/>
 
 	<groupbox orient="vertical">
 		<caption label="&bookmarks2pane.pref.mode;"/>
