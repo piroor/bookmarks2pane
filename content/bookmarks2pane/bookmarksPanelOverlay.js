@@ -431,56 +431,6 @@ var Bookmarks2PaneService = {
 	
 	hackForOtherExtensions : function() 
 	{
-		// hack for Bookmarks Duplicate Detector
-		if ('BddsearchBookmarks' in window)
-			eval('window.BddsearchBookmarks = '+window.BddsearchBookmarks.toSource().replace(
-				/(if\s*\(!aInput\))/,
-				'var Bookmarks2PaneOnFolderSelectEventDetail = {}; $1'
-			).replace(
-				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],\s*bookmarkView\.originalRef\s*\)/,
-				'Bookmarks2PaneOnFolderSelectEventDetail.targetQuery = null'
-			).replace(
-				/bookmarkView\.tree\.setAttribute\(\s*['"]ref['"],(.+)\)/g,
-				'Bookmarks2PaneOnFolderSelectEventDetail.targetQuery = $1'
-			).replace(
-				/\}(\)?)$/,
-				'; var event = new CustomEvent("Bookmarks2PaneOnFolderSelect", { bubbles : false, cancelable : true, detail : Bookmarks2PaneOnFolderSelectEventDetail }); Bookmarks2PaneService.mainTree.dispatchEvent(event);}$1'
-			));
-
-
-		// hack for Boox
-		if ('booxBPTooltip' in window)
-			eval('window.booxBPTooltip.fillInTooltip = '+window.booxBPTooltip.fillInTooltip.toSource().replace(
-				'var tree = document.getElementById("bookmarks-view").tree;',
-				'  var tree = document.tooltipNode || document.popupNode;\n' +
-				'  while (tree.parentNode && tree.localName != "bookmarks-tree") {\n' +
-				'    tree = tree.parentNode;\n' +
-				'  }\n' +
-				'  if (!tree)\n' +
-				'    return false;\n' +
-				'  else if (tree.tree)\n' +
-				'    tree = tree.tree;\n'
-			));
-
-
-		// hack for Locate in Bookmark Folders
-		if ('libfOverlayBP' in window)
-			eval('window.libfOverlayBP.locateInFolders = '+window.libfOverlayBP.locateInFolders.toSource().replace(
-				'{',
-				'{ Bookmarks2PaneService.showHideTreeForSearch(true); '
-			).replace(
-				/libfOverlayBP\.bookmarksView/g,
-				'Bookmarks2PaneService.contentTree'
-			));
-
-
-		// hack for Bookmark quick folder
-		if ('BqsOverlay' in window)
-			eval('window.BqsOverlay.doMove = '+window.BqsOverlay.doMove.toSource().replace(
-				'document.getElementById("bookmarks-view")',
-				'Bookmarks2PaneService.currentTree'
-			));
-
 	}
   
 }; 

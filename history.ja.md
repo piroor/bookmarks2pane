@@ -1,6 +1,7 @@
 # 更新履歴
 
  - master/HEAD
+   * 既に更新されなくなっている以下のアドオンとの互換性のためのコードを削除: [Bookmarks Duplicate Detector](https://addons.mozilla.org/firefox/addon/bookmark-duplicate-detector/), [Boox](https://addons.mozilla.org/firefox/addon/boox/), [Locate in Bookmark Folders](https://addons.mozilla.org/firefox/addon/locate-in-bookmark-folders/), [Bookmark quick folder](https://addons.mozilla.org/firefox/addon/bookmark-quick-folder/)
  - 1.0.2016020602
    * Nightly 47.0a1に対応
    * Firefox 37以前への対応を終了
