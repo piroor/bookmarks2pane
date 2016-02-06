@@ -1,6 +1,9 @@
 # 更新履歴
 
  - master/HEAD
+ - 1.0.2016020701
+   * メイン機能を無効化するための設定項目を削除（無意味なので）
+   * 設定名を独自の名前空間の下に置くようにした
    * 既に更新されなくなっている以下のアドオンとの互換性のためのコードを削除: [Bookmarks Duplicate Detector](https://addons.mozilla.org/firefox/addon/bookmark-duplicate-detector/), [Boox](https://addons.mozilla.org/firefox/addon/boox/), [Locate in Bookmark Folders](https://addons.mozilla.org/firefox/addon/locate-in-bookmark-folders/), [Bookmark quick folder](https://addons.mozilla.org/firefox/addon/bookmark-quick-folder/)
  - 1.0.2016020602
    * Nightly 47.0a1に対応

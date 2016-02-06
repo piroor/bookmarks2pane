@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 1.0.2016020701
+   * Remove a nonsense preference to disable its core feature.
+   * Put preferences under its own namespace.
    * Drop support for abandoned addons: [Bookmarks Duplicate Detector](https://addons.mozilla.org/firefox/addon/bookmark-duplicate-detector/), [Boox](https://addons.mozilla.org/firefox/addon/boox/), [Locate in Bookmark Folders](https://addons.mozilla.org/firefox/addon/locate-in-bookmark-folders/) and [Bookmark quick folder](https://addons.mozilla.org/firefox/addon/bookmark-quick-folder/).
  - 1.0.2016020602
    * Works on Nightly 47.0a1.
