@@ -8,5 +8,6 @@ locale	bookmarks2pane	ja-JP	locale/ja-JP/bookmarks2pane/
 locale	bookmarks2pane	sk-SK	locale/sk-SK/bookmarks2pane/
 locale	bookmarks2pane	hu-HU	locale/hu-HU/bookmarks2pane/
 locale	bookmarks2pane	it-IT	locale/it-IT/bookmarks2pane/
+locale	bookmarks2pane	fr-FR	locale/fr-FR/bookmarks2pane/
 
 resource bookmarks2pane-modules modules/

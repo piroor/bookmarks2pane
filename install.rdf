@@ -16,6 +16,7 @@
 	<em:translator>Jacen (sk-SK)</em:translator>
 	<em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
 	<em:translator>DigitalMax (it-IT)</em:translator>
+	<em:translator>tojazmin (fr-FR)</em:translator>
 
 
     <em:updateURL>http://piro.sakura.ne.jp/xul/update.rdf</em:updateURL>
@@ -30,6 +31,7 @@
         <em:translator>Jacen (sk-SK)</em:translator>
         <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
         <em:translator>DigitalMax (it-IT)</em:translator>
+        <em:translator>tojazmin (fr-FR)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -40,6 +42,7 @@
         <em:translator>Jacen (sk-SK)</em:translator>
         <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
         <em:translator>DigitalMax (it-IT)</em:translator>
+        <em:translator>tojazmin (fr-FR)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -50,6 +53,7 @@
         <em:translator>Jacen (sk-SK)</em:translator>
         <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
         <em:translator>DigitalMax (it-IT)</em:translator>
+        <em:translator>tojazmin (fr-FR)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -60,6 +64,18 @@
         <em:translator>Jacen (sk-SK)</em:translator>
         <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
         <em:translator>DigitalMax (it-IT)</em:translator>
+        <em:translator>tojazmin (fr-FR)</em:translator>
+      </RDF:Description>
+    </em:localized>
+    <em:localized>
+      <RDF:Description em:locale="fr-FR"
+                       em:name="2 Pane Bookmarks"
+                       em:description="Affiche la barre des marque-pages, séparant les dossiers de leurs contenus, comme Opera"
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_bookmarks2pane.html.en">
+        <em:translator>Jacen (sk-SK)</em:translator>
+        <em:translator>Mikes Kaszmán István (hu-HU)</em:translator>
+        <em:translator>DigitalMax (it-IT)</em:translator>
+        <em:translator>tojazmin (fr-FR)</em:translator>
       </RDF:Description>
     </em:localized>
 
