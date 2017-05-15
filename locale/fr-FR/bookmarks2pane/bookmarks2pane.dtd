@@ -1,0 +1,12 @@
+<!ENTITY deleteCmd.label            "Supprimer">
+
+
+<!ENTITY bookmarks2pane.pref.title  "Configuration de 2 Pane Bookmarks">
+
+<!ENTITY bookmarks2pane.pref.tab.general   "Général">
+
+<!ENTITY bookmarks2pane.pref.appearance "Apparence">
+
+<!ENTITY bookmarks2pane.pref.mode    "Comportement de l'arborescence des marque-pages">
+<!ENTITY bookmarks2pane.pref.mode.normal "Développer les sous-arborescences normalement">
+<!ENTITY bookmarks2pane.pref.mode.open_only_one_tree "Réduire automatiquement les autres branches lorsqu'une sous-arborescence est développée">
